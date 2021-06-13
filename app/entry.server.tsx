@@ -4,6 +4,7 @@ import { RemixServer, json } from "remix";
 import dotenv from "dotenv";
 import { getGardenStorage } from "./workspace/storage.server";
 import { Document, WriteResult } from "earthstar";
+import { ES_AUTHOR_ADDRESS } from "./constants";
 
 export default async function handleRequest(
   request: Request,
@@ -61,6 +62,11 @@ export default async function handleRequest(
 
       let numIngested = 0;
       for (let doc of docs) {
+        // Only sync docs from gwil
+        if (doc.author !== ES_AUTHOR_ADDRESS) {
+          return;
+        }
+
         if (storage.ingestDocument(doc, "🙂") === WriteResult.Accepted) {
           numIngested += 1;
         }
