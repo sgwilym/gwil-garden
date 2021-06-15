@@ -4,13 +4,19 @@ import { Outlet } from "react-router-dom";
 import * as InternetTime from "dot-beat-time";
 
 import stylesUrl from "./styles/global.css";
+import { getGardenStorage } from "./workspace/storage.server";
+import { ES_AUTHOR_ADDRESS } from "./constants";
 
 export let links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
 export let loader: LoaderFunction = async () => {
-  return { date: new Date() };
+  const storage = getGardenStorage();
+
+  const status = storage?.getContent(`/about/~${ES_AUTHOR_ADDRESS}/status.txt`);
+
+  return { date: new Date(), status };
 };
 
 function Document({ children }: { children: React.ReactNode }) {
@@ -24,8 +30,6 @@ function Document({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-
-        <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
     </html>
@@ -33,13 +37,26 @@ function Document({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  let data = useRouteData();
+  const data = useRouteData();
+
   return (
     <Document>
-      <h1>gwil's garden</h1>
+      <header className={"my-4 p-3 bg-gray-50 rounded-lg max-w-prose m-auto"}>
+        <h1
+          className={"text-green-600 hover:text-green-800 transition text-xl "}
+        >
+          <a href="/">gwil's garden 🌱</a>
+        </h1>
+        <p className={"text-sm text-gray-400"}>{data.status}</p>
+      </header>
       <Outlet />
-      <footer>
-        <p>This page was rendered at {InternetTime.now()}</p>
+      <footer className={"text-gray-300 p-4 max-w-prose m-auto"}>
+        <p>
+          This page was rendered at{" "}
+          <a className={"underline"} href="http://gwil.co/internet-time/">
+            {InternetTime.now()}
+          </a>
+        </p>
       </footer>
     </Document>
   );

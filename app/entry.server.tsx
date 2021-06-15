@@ -46,13 +46,34 @@ export default async function handleRequest(
     // list paths
     // /earthstar-api/v1/:workspace/paths
     if (pathname === `${API_PREFIX}/paths` && request.method === "GET") {
-      return json(storage.paths());
+      return json(storage.paths(), {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
     }
 
     // get all documents
     // /earthstar-api/v1/:workspace/documents
     if (pathname === `${API_PREFIX}/documents` && request.method === "GET") {
-      return json(storage.documents({ history: "all" }));
+      return json(storage.documents({ history: "all" }), {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
+    }
+
+    if (
+      pathname === `${API_PREFIX}/documents` &&
+      request.method === "OPTIONS"
+    ) {
+      return new Response("ok", {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
     }
 
     // ingest documents (uploaded from client)
@@ -76,11 +97,18 @@ export default async function handleRequest(
         }
       }
 
-      return json({
-        numIngested: numIngested,
-        numIgnored: docs.length - numIngested,
-        numTotal: docs.length,
-      });
+      return json(
+        {
+          numIngested: numIngested,
+          numIgnored: docs.length - numIngested,
+          numTotal: docs.length,
+        },
+        {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
     }
 
     // Don't do live streaming.
