@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
+import { MetaFunction, LinksFunction, LoaderFunction, json } from "remix";
 import { useRouteData } from "remix";
 
 import stylesUrl from "../styles/index.css";
@@ -29,7 +29,14 @@ export let loader: LoaderFunction = async () => {
   // load all the blog posts from workspace.
   const posts = await getPosts();
 
-  return { posts };
+  return json(
+    { posts },
+    {
+      headers: {
+        "Cache-Control": "max-age=300",
+      },
+    }
+  );
 };
 
 function borderClassname(i: number, arr: Array<any>): string {

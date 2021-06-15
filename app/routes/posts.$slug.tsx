@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useRouteData } from "remix/client";
-import { LoaderFunction, redirect } from "remix/server";
+import { json, LoaderFunction, redirect } from "remix/server";
 import { getPost, Post } from "../workspace/posts.server";
 import { getMDXComponent } from "mdx-bundler/client";
 import { format } from "date-fns";
@@ -12,7 +12,14 @@ export let loader: LoaderFunction = async ({ params }) => {
     return redirect("/404");
   }
 
-  return { post };
+  return json(
+    { post },
+    {
+      headers: {
+        "Cache-Control": "max-age=300",
+      },
+    }
+  );
 };
 
 type LoaderType = {

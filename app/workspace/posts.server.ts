@@ -5,7 +5,7 @@ import { ES_AUTHOR_ADDRESS } from '../constants'
 
 export type Post = {
   title: string;
-  published: string;
+  published: Date;
   code: string;
   slug: string
 };
@@ -17,7 +17,7 @@ async function docToPost(doc: Document): Promise<Post> {
 
   return {
     title: result.frontmatter.title,
-    published: result.frontmatter.published,
+    published: new Date(result.frontmatter.published),
     code: result.code,
     slug
   };
