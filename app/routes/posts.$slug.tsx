@@ -1,13 +1,11 @@
 import * as React from "react";
 import { useRouteData } from "remix/client";
-import { LoaderFunction } from "remix/server";
+import { LoaderFunction, redirect } from "remix/server";
 import { getPost, Post } from "../workspace/posts.server";
 import { getMDXComponent } from "mdx-bundler/client";
 
 export let loader: LoaderFunction = async ({ params }) => {
   const post = await getPost(params.slug);
-
-  // TODO: Redirect if no post found
 
   return { post };
 };

@@ -6,8 +6,10 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix run",
+    "css": "postcss styles --base styles --dir app/styles --ext css -w",
     "deploy": "flyctl deploy --build-arg REMIX_TOKEN=${REMIX_TOKEN}",
-    "start": "remix-serve build"
+    "start": "remix-serve build",
+    "pm2": "pm2-dev pm2.config.js"
   },
   "dependencies": {
     "@remix-run/node": "^0.17.5",
@@ -24,8 +26,14 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^0.17.5",
+    "@tailwindcss/jit": "^0.1.18",
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.4",
+    "autoprefixer": "^10.2.6",
+    "pm2": "^5.1.0",
+    "postcss": "^8.3.2",
+    "postcss-cli": "^8.3.1",
+    "tailwindcss": "^2.1.4",
     "typescript": "^4.1.2"
   },
   "engines": {

@@ -14,6 +14,10 @@ export default async function handleRequest(
 ) {
   dotenv.config();
 
+  if (process.env.NODE_ENV !== "production") {
+    responseHeaders.set("Cache-Control", "no-store");
+  }
+
   // TODO: RSS.
   /*
   if (new URL(request.url).pathname === "/rss.xml") {

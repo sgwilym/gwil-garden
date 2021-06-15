@@ -15,6 +15,13 @@ export let links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
+export function headers() {
+  return {
+    "Cache-Control":
+      "max-age=600, s-maxage=604800, stale-while-revalidate=604800",
+  };
+}
+
 type PostLoaderType = { posts: Post[] };
 
 export let loader: LoaderFunction = async () => {

@@ -6,8 +6,10 @@
     },
     "run" : {
       "enabled" : true,
-      "script" : "npm run dev"
+      "script" : "npm run pm2"
     }
   },
-  "identifier" : "27206333-C2B2-4281-9ECB-2899FE4B88AB"
+  "identifier" : "27206333-C2B2-4281-9ECB-2899FE4B88AB",
+  "openLogOnRun" : "start",
+  "persistent" : true
 }
