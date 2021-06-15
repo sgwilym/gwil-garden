@@ -7,6 +7,10 @@ import { getMDXComponent } from "mdx-bundler/client";
 export let loader: LoaderFunction = async ({ params }) => {
   const post = await getPost(params.slug);
 
+  if (!post) {
+    return redirect("/404");
+  }
+
   return { post };
 };
 
