@@ -23,6 +23,14 @@ export function headers() {
   };
 }
 
+function borderClassname(i: number, arr: Array<any>): string {
+  if (arr.length > 1 && (i === 0 || i < arr.length - 1)) {
+    return "border-b border-gray-100 pb-3";
+  }
+
+  return "";
+}
+
 type PostLoaderType = { posts: Post[] };
 
 export let loader: LoaderFunction = async () => {
@@ -39,25 +47,17 @@ export let loader: LoaderFunction = async () => {
   );
 };
 
-function borderClassname(i: number, arr: Array<any>): string {
-  if (arr.length > 1 && (i === 0 || i < arr.length - 1)) {
-    return "border-b border-gray-100 pb-3";
-  }
-
-  return "";
-}
-
 export default function Index() {
   let data = useRouteData<PostLoaderType>();
 
   return (
-    <ul className={"max-w-prose m-auto p-4 space-y-3"}>
+    <ul className={"max-w-prose m-auto my-4 space-y-4"}>
       {data.posts.map((post, i, arr) => (
         <li className={`${borderClassname(i, arr)}`}>
           <a className={"group"} href={`/posts/${post.slug}`}>
             <h1
               className={
-                "text-xl group-hover:text-green-600 font-semibold transition"
+                "font-display text-3xl group-hover:text-yellow-400 transition"
               }
             >
               {post.title}

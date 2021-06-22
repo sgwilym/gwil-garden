@@ -27,7 +27,7 @@ type LoaderType = {
 };
 
 function Link(props: {}) {
-  return <a className={"underline text-green-600"} {...props} />;
+  return <a className={"underline text-blue-600"} {...props} />;
 }
 
 export default function Post() {
@@ -39,9 +39,9 @@ export default function Post() {
   );
 
   return (
-    <article className={"p-4 space-y-3 max-w-prose m-auto"}>
+    <article className={"py-4 space-y-3 max-w-prose m-auto"}>
       <header>
-        <h1 className={"text-xl font-semibold"}>{post.title}</h1>
+        <h1 className={"text-3xl font-display"}>{post.title}</h1>
         <p className={"text-sm text-gray-400"}>{`${format(
           new Date(post.published),
           "PPP"

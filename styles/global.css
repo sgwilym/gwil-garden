@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Dover Sans Display";
+    src: url("/fonts/DoverSansDisplay-Regular-Web.woff2") format("woff2"),
+      url("/fonts/DoverSansDisplay-Regular-Web.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Dover Sans Text";
+    src: url("/fonts/DoverSansText-Regular-Web.woff2") format("woff2"),
+      url("/fonts/DoverSansText-Regular-Web.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "Dover Sans Text";
+    src: url("/fonts/DoverSansText-Bold-Web.woff2") format("woff2"),
+      url("/fonts/DoverSansText-Bold-Web.woff") format("woff");
+    font-weight: bold;
+  }
+
+  @font-face {
+    font-family: "Dover Sans Text";
+    src: url("/fonts/DoverSansText-Italic-Web.woff2") format("woff2"),
+      url("/fonts/DoverSansText-Italic-Web.woff") format("woff");
+    font-style: italic;
+  }
+}
