@@ -19,8 +19,6 @@ export default async function handleRequest(
     responseHeaders.set("Cache-Control", "no-store");
   }
 
-  // TODO: RSS.
-
   if (new URL(request.url).pathname === "/rss/posts.xml") {
     return new Response(await postsRss(), {
       headers: {
@@ -28,8 +26,6 @@ export default async function handleRequest(
       },
     });
   }
-
-  // https://github.com/earthstar-project/earthstar-pub/blob/master/src/pub.ts
 
   const pathname = new URL(request.url).pathname;
   const API_PREFIX = `/earthstar-api/v1/${process.env.GARDEN_WORKSPACE}`;

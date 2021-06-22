@@ -50,6 +50,7 @@ export function getPosts(): Promise<Post[]> {
     pathStartsWith: "/garden/posts/",
     pathEndsWith: ".md",
     author: ES_AUTHOR_ADDRESS,
+    contentLengthGt: 0
   });
 
   storage.close();
