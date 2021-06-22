@@ -25,6 +25,12 @@ function Document({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.png" type="image/png" />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="RSS Feed for posts from Gwil's Garden"
+          href="/rss/posts.xml"
+        />
         <Meta />
         <Links />
       </head>

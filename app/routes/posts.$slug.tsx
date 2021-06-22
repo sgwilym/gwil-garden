@@ -39,7 +39,7 @@ export default function Post() {
   );
 
   return (
-    <article className={"py-4 space-y-3 max-w-prose m-auto"}>
+    <article className={"py-4 space-y-3 max-w-prose m-auto leading-normal"}>
       <header>
         <h1 className={"text-3xl font-display"}>{post.title}</h1>
         <p className={"text-sm text-gray-400"}>{`${format(

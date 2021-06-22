@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { getGardenStorage } from "./workspace/storage.server";
 import { Document, WriteResult } from "earthstar";
 import { ES_AUTHOR_ADDRESS } from "./constants";
+import { postsRss } from "./rss.server";
 
 export default async function handleRequest(
   request: Request,
@@ -19,15 +20,14 @@ export default async function handleRequest(
   }
 
   // TODO: RSS.
-  /*
-  if (new URL(request.url).pathname === "/rss.xml") {
-    return new Response(await rss(), {
+
+  if (new URL(request.url).pathname === "/rss/posts.xml") {
+    return new Response(await postsRss(), {
       headers: {
         "Content-Type": "application/xml",
       },
     });
   }
-  */
 
   // https://github.com/earthstar-project/earthstar-pub/blob/master/src/pub.ts
 
