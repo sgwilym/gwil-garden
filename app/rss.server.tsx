@@ -9,6 +9,7 @@ export async function postsRss() {
     site_url: "https://gwil.garden",
     feed_url: "https://gwil.garden/rss/posts.xml",
     webMaster: "Sam Gwilym <gwilym@me.com>",
+    image_url: "https://gwil.garden/images/favicon-196.png",
   });
 
   const posts = await getPosts();

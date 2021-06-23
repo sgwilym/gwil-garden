@@ -31,6 +31,12 @@ function Document({ children }: { children: React.ReactNode }) {
           title="RSS Feed for posts from Gwil's Garden"
           href="/rss/posts.xml"
         />
+        <link rel={"icon"} href={"images/favicon-32.png"} sizes={`32x32`} />
+        <link rel={"icon"} href={"images/favicon-128.png"} sizes={`128x128`} />
+        <link rel={"icon"} href={"images/favicon-152.png"} sizes={`152x152`} />
+        <link rel={"icon"} href={"images/favicon-167.png"} sizes={`167x167`} />
+        <link rel={"icon"} href={"images/favicon-180.png"} sizes={`180x180`} />
+        <link rel={"icon"} href={"images/favicon-196.png"} sizes={`196x196`} />
         <Meta />
         <Links />
       </head>
