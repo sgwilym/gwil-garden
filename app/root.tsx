@@ -34,7 +34,7 @@ function Document({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="mx-2">
         {children}
         {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>

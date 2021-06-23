@@ -7,7 +7,7 @@ import { getPosts, Post } from "../workspace/posts.server";
 
 export let meta: MetaFunction = () => {
   return {
-    title: "gwil's garden",
+    title: "Gwil's garden",
     description: "Where I put things in the dirt and hope for the best.",
   };
 };

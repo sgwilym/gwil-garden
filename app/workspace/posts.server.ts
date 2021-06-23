@@ -8,6 +8,7 @@ export type Post = {
   published: Date;
   code: string;
   slug: string
+  description: string;
 };
 
 async function docToPost(doc: Document): Promise<Post> {
@@ -17,6 +18,7 @@ async function docToPost(doc: Document): Promise<Post> {
 
   return {
     title: result.frontmatter.title,
+    description: result.frontmatter.description,
     published: new Date(result.frontmatter.published),
     code: result.code,
     slug

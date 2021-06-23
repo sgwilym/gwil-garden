@@ -1,9 +1,18 @@
 import * as React from "react";
 import { useRouteData } from "remix/client";
-import { json, LoaderFunction, redirect } from "remix/server";
+import { json, LoaderFunction, MetaFunction, redirect } from "remix/server";
 import { getPost, Post } from "../workspace/posts.server";
 import { getMDXComponent } from "mdx-bundler/client";
 import { format } from "date-fns";
+
+export let meta: MetaFunction = ({ data }) => {
+  const { post } = data as LoaderType;
+
+  return {
+    title: `${post.title} - Gwil's garden`,
+    description: post.description,
+  };
+};
 
 export let loader: LoaderFunction = async ({ params }) => {
   const post = await getPost(params.slug);
