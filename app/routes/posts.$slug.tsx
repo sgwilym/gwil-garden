@@ -24,7 +24,7 @@ export let meta: MetaFunction = ({ data }) => {
 
 export let headers: HeadersFunction = ({ loaderHeaders }) => {
   return {
-    Etag: `W\\${loaderHeaders.get("Etag")}`,
+    Etag: `W\/${loaderHeaders.get("Etag")}`,
   };
 };
 
@@ -35,11 +35,13 @@ export let loader: LoaderFunction = async ({ params }) => {
     return redirect("/404");
   }
 
+  const postEtag = etag(post.contentHash);
+
   return json(
     { post },
     {
       headers: {
-        Etag: etag(post.contentHash),
+        Etag: postEtag,
       },
     }
   );

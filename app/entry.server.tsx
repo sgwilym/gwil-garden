@@ -6,6 +6,8 @@ import { getGardenStorage } from "./workspace/storage.server";
 import { Document, WriteResult } from "earthstar";
 import { ES_AUTHOR_ADDRESS } from "./constants";
 import { postsRss } from "./rss.server";
+import { getPost } from "./workspace/posts.server";
+import etag from "./etag.server";
 
 export default async function handleRequest(
   request: Request,
@@ -17,6 +19,22 @@ export default async function handleRequest(
 
   if (process.env.NODE_ENV !== "production") {
     responseHeaders.set("Cache-Control", "no-store");
+  }
+
+  if (new URL(request.url).pathname.startsWith("/posts/")) {
+    const slug = new URL(request.url).pathname.replace("/posts/", "");
+
+    const post = await getPost(slug);
+
+    if (post) {
+      const postEtag = etag(post.contentHash, { weak: true });
+
+      console.log({ postEtag });
+
+      if (postEtag === request.headers.get("If-None-Match")) {
+        return new Response("", { status: 304 });
+      }
+    }
   }
 
   if (new URL(request.url).pathname === "/rss/posts.xml") {
