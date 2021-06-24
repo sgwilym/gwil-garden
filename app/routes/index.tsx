@@ -1,6 +1,12 @@
 import { format } from "date-fns";
-import { MetaFunction, LinksFunction, LoaderFunction, json } from "remix";
-import { useRouteData } from "remix";
+import {
+  MetaFunction,
+  LinksFunction,
+  LoaderFunction,
+  json,
+  useRouteData,
+  HeadersFunction,
+} from "remix";
 
 import stylesUrl from "../styles/index.css";
 import { getPosts, Post } from "../workspace/posts.server";
@@ -16,12 +22,11 @@ export let links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-export function headers() {
+export let headers: HeadersFunction = ({ loaderHeaders }) => {
   return {
-    "Cache-Control":
-      "max-age=600, s-maxage=604800, stale-while-revalidate=604800",
+    "Cache-Control": loaderHeaders.get("Cache-Control") || "",
   };
-}
+};
 
 function borderClassname(i: number, arr: Array<any>): string {
   if (arr.length > 1 && (i === 0 || i < arr.length - 1)) {

@@ -1,5 +1,5 @@
 import type { LinksFunction, LoaderFunction } from "remix";
-import { Meta, Links, Scripts, useRouteData, LiveReload } from "remix";
+import { Meta, Links, useRouteData, LiveReload } from "remix";
 import { Outlet } from "react-router-dom";
 import * as InternetTime from "dot-beat-time";
 
@@ -33,37 +33,37 @@ function Document({ children }: { children: React.ReactNode }) {
         />
         <link
           rel={"icon"}
-          href={"images/favicon-32.png"}
+          href={"/images/favicon-32.png"}
           sizes={`32x32`}
           type="image/png"
         />
         <link
           rel={"icon"}
-          href={"images/favicon-128.png"}
+          href={"/images/favicon-128.png"}
           sizes={`128x128`}
           type="image/png"
         />
         <link
           rel={"icon"}
-          href={"images/favicon-152.png"}
+          href={"/images/favicon-152.png"}
           sizes={`152x152`}
           type="image/png"
         />
         <link
           rel={"icon"}
-          href={"images/favicon-167.png"}
+          href={"/images/favicon-167.png"}
           sizes={`167x167`}
           type="image/png"
         />
         <link
           rel={"icon"}
-          href={"images/favicon-180.png"}
+          href={"/images/favicon-180.png"}
           sizes={`180x180`}
           type="image/png"
         />
         <link
           rel={"icon"}
-          href={"images/favicon-196.png"}
+          href={"/images/favicon-196.png"}
           sizes={`196x196`}
           type="image/png"
         />

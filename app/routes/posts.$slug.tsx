@@ -1,9 +1,17 @@
 import * as React from "react";
-import { useRouteData } from "remix/client";
-import { json, LoaderFunction, MetaFunction, redirect } from "remix/server";
+import {
+  useRouteData,
+  json,
+  LoaderFunction,
+  MetaFunction,
+  redirect,
+  HeadersFunction,
+} from "remix";
+
 import { getPost, Post } from "../workspace/posts.server";
 import { getMDXComponent } from "mdx-bundler/client";
 import { format } from "date-fns";
+import etag from "../etag.server";
 
 export let meta: MetaFunction = ({ data }) => {
   const { post } = data as LoaderType;
@@ -11,6 +19,12 @@ export let meta: MetaFunction = ({ data }) => {
   return {
     title: `${post.title} - Gwil's garden`,
     description: post.description,
+  };
+};
+
+export let headers: HeadersFunction = ({ loaderHeaders }) => {
+  return {
+    Etag: loaderHeaders.get("Etag") || "",
   };
 };
 
@@ -25,7 +39,7 @@ export let loader: LoaderFunction = async ({ params }) => {
     { post },
     {
       headers: {
-        "Cache-Control": "max-age=300",
+        Etag: etag(post.contentHash),
       },
     }
   );

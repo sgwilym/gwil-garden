@@ -19,6 +19,7 @@
     "dot-beat-time": "^1.2.1",
     "dotenv": "^10.0.0",
     "earthstar": "^6.8.5",
+    "etag": "^1.8.1",
     "mdx-bundler": "^4.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@remix-run/dev": "^0.17.5",
     "@tailwindcss/jit": "^0.1.18",
+    "@types/etag": "^1.8.0",
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.4",
     "@types/rss": "0.0.28",

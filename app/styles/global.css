@@ -585,13 +585,13 @@ video {
 .m-auto {
 	margin: auto;
 }
-.my-4 {
-	margin-top: 1rem;
-	margin-bottom: 1rem;
-}
 .mx-2 {
 	margin-left: 0.5rem;
 	margin-right: 0.5rem;
+}
+.my-4 {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 }
 .mt-6 {
 	margin-top: 1.5rem;

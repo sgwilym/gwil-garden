@@ -9,6 +9,7 @@ export type Post = {
   code: string;
   slug: string
   description: string;
+  contentHash: string
 };
 
 async function docToPost(doc: Document): Promise<Post> {
@@ -21,7 +22,8 @@ async function docToPost(doc: Document): Promise<Post> {
     description: result.frontmatter.description,
     published: new Date(result.frontmatter.published),
     code: result.code,
-    slug
+    slug,
+    contentHash: doc.contentHash
   };
 }
 
