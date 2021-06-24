@@ -24,7 +24,7 @@ export let meta: MetaFunction = ({ data }) => {
 
 export let headers: HeadersFunction = ({ loaderHeaders }) => {
   return {
-    Etag: loaderHeaders.get("Etag") || "",
+    Etag: `W\\${loaderHeaders.get("Etag")}`,
   };
 };
 

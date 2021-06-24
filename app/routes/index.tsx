@@ -46,7 +46,8 @@ export let loader: LoaderFunction = async () => {
     { posts },
     {
       headers: {
-        "Cache-Control": "max-age=300",
+        "Cache-Control":
+          "max-age=600, s-maxage=604800, stale-while-revalidate=604800",
       },
     }
   );
