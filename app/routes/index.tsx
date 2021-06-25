@@ -40,6 +40,7 @@ type PostLoaderType = { posts: Post[] };
 
 export let loader: LoaderFunction = async () => {
   // load all the blog posts from workspace.
+
   const posts = await getPosts();
 
   return json(

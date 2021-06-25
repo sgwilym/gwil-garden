@@ -29,8 +29,6 @@ export default async function handleRequest(
     if (post) {
       const postEtag = etag(post.contentHash, { weak: true });
 
-      console.log({ postEtag });
-
       if (postEtag === request.headers.get("If-None-Match")) {
         return new Response("", { status: 304 });
       }

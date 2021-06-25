@@ -51,8 +51,28 @@ type LoaderType = {
   post: Post;
 };
 
+function H2(props: {}) {
+  return <h2 {...props} className={"text-2xl font-display"} />;
+}
+
+function H3(props: {}) {
+  return <h3 {...props} className={"text-xl"} />;
+}
+
+function H4(props: {}) {
+  return <h4 {...props} className={"font-bold"} />;
+}
+
 function Link(props: {}) {
   return <a className={"underline text-blue-600"} {...props} />;
+}
+
+function ListItem(props: {}) {
+  return <li className={"list-disc"} {...props} />;
+}
+
+function UnorderedList(props: {}) {
+  return <ul className={"space-y-3 pl-5"} {...props} />;
 }
 
 export default function Post() {
@@ -73,7 +93,16 @@ export default function Post() {
         )}`}</p>
       </header>
 
-      <Component components={{ a: Link }} />
+      <Component
+        components={{
+          a: Link,
+          h2: H2,
+          h3: H3,
+          h4: H4,
+          li: ListItem,
+          ul: UnorderedList,
+        }}
+      />
     </article>
   );
 }
