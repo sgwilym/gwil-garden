@@ -34,6 +34,8 @@ const importFromEarthstarPlugin: Plugin = {
       const maybeComponent = storage.getContent(
         `/garden/posts/components/${filename}`
       );
+      
+      storage.close()
 
       if (maybeComponent) {
         return { contents: maybeComponent, loader: "tsx" };
@@ -80,13 +82,18 @@ export function getPost(slug: string): Promise<Post | undefined> {
 
   if (!doc) {
     const mdxDoc = storage.getDocument(`/garden/posts/${slug}.mdx`);
+    
+    storage.close()
 
     if (!mdxDoc) {
+      
       return Promise.resolve(undefined);
     }
 
     return docToPost(mdxDoc);
   }
+  
+  storage.close()
 
   return docToPost(doc);
 }

@@ -58,7 +58,11 @@ export default async function handleRequest(
     // list paths
     // /earthstar-api/v1/:workspace/paths
     if (pathname === `${API_PREFIX}/paths` && request.method === "GET") {
-      return json(storage.paths(), {
+      const paths = storage.paths();
+
+      storage.close();
+
+      return json(paths, {
         headers: {
           "Access-Control-Allow-Origin": "*",
         },
@@ -68,7 +72,11 @@ export default async function handleRequest(
     // get all documents
     // /earthstar-api/v1/:workspace/documents
     if (pathname === `${API_PREFIX}/documents` && request.method === "GET") {
-      return json(storage.documents({ history: "all" }), {
+      const docs = storage.documents({ history: "all" });
+
+      storage.close();
+
+      return json(docs, {
         headers: {
           "Access-Control-Allow-Origin": "*",
         },
@@ -79,6 +87,8 @@ export default async function handleRequest(
       pathname === `${API_PREFIX}/documents` &&
       request.method === "OPTIONS"
     ) {
+      storage.close();
+
       return new Response("ok", {
         status: 200,
         headers: {
@@ -108,6 +118,8 @@ export default async function handleRequest(
           numIngested += 1;
         }
       }
+
+      storage.close();
 
       return json(
         {
