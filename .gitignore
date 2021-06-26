@@ -8,4 +8,5 @@ node_modules
 .env
 
 /data
+/data-dev
 .DS_Store

@@ -3,11 +3,12 @@ import type { EntryContext } from "remix";
 import { RemixServer, json } from "remix";
 import dotenv from "dotenv";
 import { getGardenStorage } from "./workspace/storage.server";
-import { Document, WriteResult } from "earthstar";
+import { Document, WriteResult, syncLocalAndHttp } from "earthstar";
 import { ES_AUTHOR_ADDRESS } from "./constants";
 import { postsRss } from "./rss.server";
 import { getPost } from "./workspace/posts.server";
 import etag from "./etag.server";
+import { getInstanceURLs } from "./workspace/instances.server";
 
 export default async function handleRequest(
   request: Request,
@@ -93,6 +94,7 @@ export default async function handleRequest(
         status: 200,
         headers: {
           "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Methods": "GET, POST",
           "Access-Control-Allow-Origin": "*",
         },
       });
@@ -114,12 +116,24 @@ export default async function handleRequest(
           return;
         }
 
-        if (storage.ingestDocument(doc, "🙂") === WriteResult.Accepted) {
+        const result = storage.ingestDocument(doc, "🙂");
+
+        if (result === WriteResult.Accepted) {
           numIngested += 1;
+        } else {
+          console.warn(result);
         }
       }
 
-      storage.close();
+      getInstanceURLs().then((urls) => {
+        console.log(`Syncing with ${urls}`);
+        Promise.all(urls.map((url) => syncLocalAndHttp(storage, url))).then(
+          () => {
+            console.log("Synced!");
+            storage.close();
+          }
+        );
+      });
 
       return json(
         {

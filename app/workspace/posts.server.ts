@@ -16,6 +16,8 @@ export type Post = {
 const importFromEarthstarPlugin: Plugin = {
   name: "earthstar",
   setup(build) {
+    const storage = getGardenStorage();
+
     build.onResolve({ filter: /.*\/components\/.*/ }, (args) => ({
       path: args.path,
       namespace: "earthstar",
@@ -23,9 +25,7 @@ const importFromEarthstarPlugin: Plugin = {
     build.onLoad({ filter: /.*/, namespace: "earthstar" }, (args) => {
       const { path } = args;
 
-      const storage = getGardenStorage();
-
-      if (!storage) {
+      if (!storage) {    
         return args;
       }
 
@@ -34,8 +34,6 @@ const importFromEarthstarPlugin: Plugin = {
       const maybeComponent = storage.getContent(
         `/garden/posts/components/${filename}`
       );
-      
-      storage.close()
 
       if (maybeComponent) {
         return { contents: maybeComponent, loader: "tsx" };
@@ -43,21 +41,28 @@ const importFromEarthstarPlugin: Plugin = {
 
       return {};
     });
+    build.onEnd(() => {
+      storage?.close();
+
+      return undefined;
+    });
   },
 };
 
-async function docToPost(doc: Document): Promise<Post> {
+async function docToPost(doc: Document): Promise<Post> {  
+  console.log('oh')
+  
   const result = await bundleMDX(doc.content, {
     esbuildOptions(options) {
       const plugins = options.plugins || [];
-
-      // console.log({plugins})
 
       options.plugins = [importFromEarthstarPlugin, ...plugins];
 
       return options;
     },
   });
+  
+  console.log({result})
 
   const slug = doc.path.replace("/garden/posts/", "").replace(/\.mdx?/, "");
 
@@ -82,18 +87,17 @@ export function getPost(slug: string): Promise<Post | undefined> {
 
   if (!doc) {
     const mdxDoc = storage.getDocument(`/garden/posts/${slug}.mdx`);
-    
-    storage.close()
+
+    storage.close();
 
     if (!mdxDoc) {
-      
       return Promise.resolve(undefined);
     }
 
     return docToPost(mdxDoc);
   }
-  
-  storage.close()
+
+  storage.close();
 
   return docToPost(doc);
 }
@@ -107,17 +111,17 @@ export function getPosts(): Promise<Post[]> {
 
   const docs = storage.documents({
     pathStartsWith: "/garden/posts/",
-    pathEndsWith: '.md',
+    pathEndsWith: ".md",
     author: ES_AUTHOR_ADDRESS,
     contentLengthGt: 0,
   });
-  
+
   const mdxDocs = storage.documents({
     pathStartsWith: "/garden/posts/",
-    pathEndsWith: '.mdx',
+    pathEndsWith: ".mdx",
     author: ES_AUTHOR_ADDRESS,
     contentLengthGt: 0,
-  })
+  });
 
   storage.close();
 

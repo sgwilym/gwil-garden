@@ -7,10 +7,12 @@ export function getGardenStorage() {
   if (!process.env.GARDEN_WORKSPACE) {
     return undefined;
   }
+  
+  const sqlPath = process.env.NODE_ENV !== "production" ? './data-dev/gwilgarden.sql' : './data/gwilgarden.sql'
 
   return new StorageSqlite({
     workspace: process.env.GARDEN_WORKSPACE,
-    filename: "./data/gwilgarden.sql",
+    filename: sqlPath,
     mode: "create-or-open",
     validators: [ValidatorEs4],
   });

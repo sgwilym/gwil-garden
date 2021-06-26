@@ -16,6 +16,8 @@ export let loader: LoaderFunction = async () => {
 
   const status = storage?.getContent(`/about/~${ES_AUTHOR_ADDRESS}/status.txt`);
 
+  storage?.close();
+
   return { date: new Date(), status };
 };
 
@@ -24,7 +26,7 @@ function Document({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-
+        <meta name="viewport" content="width=device-width" />
         <link
           rel="alternate"
           type="application/rss+xml"
