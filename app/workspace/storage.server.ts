@@ -1,5 +1,6 @@
 import { StorageSqlite, ValidatorEs4 } from "earthstar";
 import dotenv from "dotenv";
+import crypto from 'crypto'
 
 export function getGardenStorage() {
   dotenv.config();
@@ -16,4 +17,20 @@ export function getGardenStorage() {
     mode: "create-or-open",
     validators: [ValidatorEs4],
   });
+}
+
+export function getStorageHash(): string {
+  const storage = getGardenStorage();
+  
+  if (!storage) {
+    return "";
+  }
+  
+  const docs = storage.documents();
+  
+  const hash = crypto.createHash("md5").update(JSON.stringify(docs)).digest('hex')
+  
+  storage.close();
+  
+  return hash;
 }

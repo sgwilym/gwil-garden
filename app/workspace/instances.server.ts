@@ -7,5 +7,7 @@ export async function getInstanceURLs(): Promise<string[]> {
 
   const resolver = new promises.Resolver();
 
-  return resolver.resolve6(`${process.env.FLY_APP_NAME}.internal`);
+  const ipv6s = await resolver.resolve6(`${process.env.FLY_APP_NAME}.internal`);
+  
+  return ipv6s.map((ip) => `http://[${ip}]:8080`)
 }

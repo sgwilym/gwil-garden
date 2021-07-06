@@ -14,7 +14,9 @@ export let links: LinksFunction = () => {
 export let loader: LoaderFunction = async () => {
   const storage = getGardenStorage();
 
-  const status = storage?.getContent(`/about/~${ES_AUTHOR_ADDRESS}/status.txt`);
+  const status =
+    storage?.getContent(`/about/~${ES_AUTHOR_ADDRESS}/status.txt`) ||
+    "Enjoying the morning.";
 
   storage?.close();
 

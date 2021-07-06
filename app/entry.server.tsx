@@ -2,7 +2,7 @@ import ReactDOMServer from "react-dom/server";
 import type { EntryContext } from "remix";
 import { RemixServer, json } from "remix";
 import dotenv from "dotenv";
-import { getGardenStorage } from "./workspace/storage.server";
+import { getGardenStorage, getStorageHash } from "./workspace/storage.server";
 import { Document, WriteResult, syncLocalAndHttp } from "earthstar";
 import { ES_AUTHOR_ADDRESS } from "./constants";
 import { postsRss } from "./rss.server";
@@ -20,6 +20,15 @@ export default async function handleRequest(
 
   if (process.env.NODE_ENV !== "production") {
     responseHeaders.set("Cache-Control", "no-store");
+  }
+
+  if (
+    new URL(request.url).pathname ===
+    `/${process.env.GARDEN_WORKSPACE}/store-hash`
+  ) {
+    return new Response(getStorageHash(), {
+      status: 200,
+    });
   }
 
   if (new URL(request.url).pathname.startsWith("/posts/")) {
@@ -91,7 +100,6 @@ export default async function handleRequest(
       storage.close();
 
       return new Response("ok", {
-        status: 200,
         headers: {
           "Access-Control-Allow-Headers": "Content-Type",
           "Access-Control-Allow-Methods": "GET, POST",
@@ -120,19 +128,31 @@ export default async function handleRequest(
 
         if (result === WriteResult.Accepted) {
           numIngested += 1;
-        } else {
-          console.warn(result);
         }
       }
 
-      getInstanceURLs().then((urls) => {
-        console.log(`Syncing with ${urls}`);
-        Promise.all(urls.map((url) => syncLocalAndHttp(storage, url))).then(
-          () => {
-            console.log("Synced!");
-            storage.close();
+      const urls = await getInstanceURLs();
+
+      const promises = urls.map((url) => {
+        return new Promise(async (resolve) => {
+          const fetchFrom = `${url}/${process.env.GARDEN_WORKSPACE}/store-hash`;
+          const response = await fetch(fetchFrom);
+          const instanceStoreHash = await response.text();
+
+          const ownHash = getStorageHash();
+
+          console.log({ instanceStoreHash, ownHash });
+
+          if (instanceStoreHash !== ownHash) {
+            return syncLocalAndHttp(storage, url);
           }
-        );
+
+          resolve("");
+        });
+      });
+
+      Promise.all(promises).then(() => {
+        storage.close();
       });
 
       return json(
@@ -149,6 +169,7 @@ export default async function handleRequest(
       );
     }
 
+    storage.close();
     // Don't do live streaming.
   }
 

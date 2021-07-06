@@ -17,7 +17,6 @@ const importFromEarthstarPlugin: Plugin = {
   name: "earthstar",
   setup(build) {
     const storage = getGardenStorage();
-
     build.onResolve({ filter: /.*\/components\/.*/ }, (args) => ({
       path: args.path,
       namespace: "earthstar",
@@ -50,7 +49,7 @@ const importFromEarthstarPlugin: Plugin = {
 };
 
 async function docToPost(doc: Document): Promise<Post> {  
-  console.log('oh')
+
   
   const result = await bundleMDX(doc.content, {
     esbuildOptions(options) {
@@ -61,8 +60,7 @@ async function docToPost(doc: Document): Promise<Post> {
       return options;
     },
   });
-  
-  console.log({result})
+
 
   const slug = doc.path.replace("/garden/posts/", "").replace(/\.mdx?/, "");
 
