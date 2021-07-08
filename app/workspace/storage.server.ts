@@ -11,7 +11,7 @@ export function getGardenStorage() {
     return undefined;
   }
   
-  const sqlPath = process.env.NODE_ENV !== "production" ? 'data-dev/gwilgarden.sql' : 'data/gwilgarden.sql'
+  const sqlPath = process.env.NODE_ENV !== "production" ? 'data-dev/gwilgarden.sql' : '../data/gwilgarden.sql'
 
   if (!storageSingleton) {
    storageSingleton = new StorageSqlite({
