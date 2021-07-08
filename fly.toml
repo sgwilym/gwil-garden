@@ -39,6 +39,15 @@ kill_timeout = 5
     interval = "15s"
     restart_limit = 6
     timeout = "2s"
+
+[[statics]]
+  guest_path = "/public/images"
+  url_prefix = "/images"
+  
+[[statics]]
+guest_path = "/public/fonts"
+url_prefix = "/fonts"
+  
     
 [mounts]
 source="garden_data"
