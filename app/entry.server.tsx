@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import { getGardenStorage, getStorageHash } from "./workspace/storage.server";
 import { Document, WriteResult, syncLocalAndHttp } from "earthstar";
 import { ES_AUTHOR_ADDRESS } from "./constants";
-import { postsRss } from "./rss.server";
+import { lobbyRss, postsRss } from "./rss.server";
 import { getPost } from "./workspace/posts.server";
 import etag from "./etag.server";
 import { getInstanceURLs } from "./workspace/instances.server";
@@ -47,6 +47,14 @@ export default async function handleRequest(
 
   if (new URL(request.url).pathname === "/rss/posts.xml") {
     return new Response(await postsRss(), {
+      headers: {
+        "Content-Type": "application/xml",
+      },
+    });
+  }
+
+  if (new URL(request.url).pathname === "/rss/microposts.xml") {
+    return new Response(await lobbyRss(), {
       headers: {
         "Content-Type": "application/xml",
       },

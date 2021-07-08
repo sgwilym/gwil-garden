@@ -7,9 +7,11 @@ import {
   useRouteData,
   HeadersFunction,
 } from "remix";
+import MicroPost from "../components/MicroPost";
 
 import stylesUrl from "../styles/index.css";
-import { getPosts, Post } from "../workspace/posts.server";
+import { getLobbyPosts, LobbyPost } from "../workspace/lobby.server";
+import { getPosts, isPost, Post } from "../workspace/posts.server";
 
 export let meta: MetaFunction = () => {
   return {
@@ -36,15 +38,16 @@ function borderClassname(i: number, arr: Array<any>): string {
   return "";
 }
 
-type PostLoaderType = { posts: Post[] };
+type IndexLoaderType = { posts: Post[]; lobbies: LobbyPost[] };
 
 export let loader: LoaderFunction = async () => {
   // load all the blog posts from workspace.
 
   const posts = await getPosts();
+  const lobbies = getLobbyPosts();
 
   return json(
-    { posts },
+    { posts, lobbies },
     {
       headers: {
         "Cache-Control":
@@ -54,28 +57,51 @@ export let loader: LoaderFunction = async () => {
   );
 };
 
+function PostLink({ post, className }: { post: Post; className: string }) {
+  return (
+    <li className={className}>
+      <a className={"group"} href={`/posts/${post.slug}`}>
+        <h1
+          className={
+            "font-display text-3xl group-hover:text-yellow-400 transition"
+          }
+        >
+          {post.title}
+        </h1>
+        <p className={"text-sm text-gray-400"}>{`${format(
+          new Date(post.published),
+          "PPP"
+        )}`}</p>
+      </a>
+    </li>
+  );
+}
+
 export default function Index() {
-  let data = useRouteData<PostLoaderType>();
+  let data = useRouteData<IndexLoaderType>();
+
+  const everythingSorted = [...data.posts, ...data.lobbies].sort((a, b) => {
+    if (a.published < b.published) {
+      return 1;
+    }
+
+    if (a.published > b.published) {
+      return -1;
+    }
+
+    return 0;
+  });
 
   return (
-    <ul className={"max-w-prose m-auto my-4 space-y-4"}>
-      {data.posts.map((post, i, arr) => (
-        <li className={`${borderClassname(i, arr)}`}>
-          <a className={"group"} href={`/posts/${post.slug}`}>
-            <h1
-              className={
-                "font-display text-3xl group-hover:text-yellow-400 transition"
-              }
-            >
-              {post.title}
-            </h1>
-            <p className={"text-sm text-gray-400"}>{`${format(
-              new Date(post.published),
-              "PPP"
-            )}`}</p>
-          </a>
-        </li>
-      ))}
-    </ul>
+    <ol className={"max-w-prose m-auto my-4 space-y-4"}>
+      {everythingSorted.map((thing, i, arr) => {
+        const bClassName = borderClassname(i, arr);
+
+        if (!isPost(thing)) {
+          return <MicroPost className={bClassName} lobbyPost={thing} />;
+        }
+        return <PostLink post={thing} className={bClassName} />;
+      })}
+    </ol>
   );
 }

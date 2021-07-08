@@ -34,6 +34,12 @@ function Document({ children }: { children: React.ReactNode }) {
           href="/rss/posts.xml"
         />
         <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="RSS Feed for *micro* posts from Gwil's Garden"
+          href="/rss/microposts.xml"
+        />
+        <link
           rel={"icon"}
           href={"/images/favicon-32.png"}
           sizes={`32x32`}

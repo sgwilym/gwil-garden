@@ -13,6 +13,14 @@ export type Post = {
   contentHash: string;
 };
 
+export function isPost(value: any): value is Post {
+  if ('contentHash' in value) {
+    return true
+  }
+  
+  return false
+}
+
 const importFromEarthstarPlugin: Plugin = {
   name: "earthstar",
   setup(build) {

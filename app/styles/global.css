@@ -702,6 +702,26 @@ video {
 .font-bold {
 	font-weight: 700;
 }
+.ordinal, .slashed-zero, .lining-nums, .oldstyle-nums, .proportional-nums, .tabular-nums, .diagonal-fractions, .stacked-fractions {
+	--tw-ordinal: var(--tw-empty,/*!*/ /*!*/);
+	--tw-slashed-zero: var(--tw-empty,/*!*/ /*!*/);
+	--tw-numeric-figure: var(--tw-empty,/*!*/ /*!*/);
+	--tw-numeric-spacing: var(--tw-empty,/*!*/ /*!*/);
+	--tw-numeric-fraction: var(--tw-empty,/*!*/ /*!*/);
+	font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+.ordinal {
+	--tw-ordinal: ordinal;
+}
+.tabular-nums {
+	--tw-numeric-spacing: tabular-nums;
+}
+.proportional-nums {
+	--tw-numeric-spacing: proportional-nums;
+}
+.lining-nums {
+	--tw-numeric-figure: lining-nums;
+}
 .leading-normal {
 	line-height: 1.5;
 }
@@ -724,6 +744,18 @@ video {
 .text-blue-600 {
 	--tw-text-opacity: 1;
 	color: rgba(37, 99, 235, var(--tw-text-opacity));
+}
+.text-gray-500 {
+	--tw-text-opacity: 1;
+	color: rgba(113, 113, 122, var(--tw-text-opacity));
+}
+.text-gray-600 {
+	--tw-text-opacity: 1;
+	color: rgba(82, 82, 91, var(--tw-text-opacity));
+}
+.text-gray-700 {
+	--tw-text-opacity: 1;
+	color: rgba(63, 63, 70, var(--tw-text-opacity));
 }
 .underline {
 	text-decoration: underline;
