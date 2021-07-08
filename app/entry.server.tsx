@@ -147,18 +147,19 @@ export default async function handleRequest(
 
       Promise.all(promises);
 
-      return json(
-        {
-          numIngested: numIngested,
-          numIgnored: docs.length - numIngested,
-          numTotal: docs.length,
+      const results = {
+        numIngested: numIngested,
+        numIgnored: docs.length - numIngested,
+        numTotal: docs.length,
+      };
+
+      console.log(results);
+
+      return json(results, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
         },
-        {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
+      });
     }
 
     // Don't do live streaming.

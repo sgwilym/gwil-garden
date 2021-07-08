@@ -36,7 +36,5 @@ export function getStorageHash(): string {
   
   const hash = crypto.createHash("md5").update(JSON.stringify(docs)).digest('hex')
   
-  
-  
   return hash;
 }
