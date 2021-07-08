@@ -47,6 +47,7 @@ export function getLobbyPosts(): LobbyPost[] {
   const posts = storage?.documents({
     pathStartsWith: `/lobby/~${ES_AUTHOR_ADDRESS}/`,
     pathEndsWith: '.txt',
+    contentLengthGt: 0
   });
   
   return posts.map(lobbyPostFromDoc).sort((aPost, bPost) => aPost.published < bPost.published ? 1 : -1)
@@ -66,6 +67,7 @@ export function getLobbyPost(timestamp: number): LobbyPost | undefined {
   const [post] = storage?.documents({
     pathStartsWith: `/lobby/~${ES_AUTHOR_ADDRESS}/`,
     pathEndsWith: `${timestamp}.txt`,
+    contentLengthGt: 0
   });
   
   return post ? lobbyPostFromDoc(post) : undefined
