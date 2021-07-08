@@ -18,8 +18,6 @@ export let loader: LoaderFunction = async () => {
     storage?.getContent(`/about/~${ES_AUTHOR_ADDRESS}/status.txt`) ||
     "Enjoying the morning.";
 
-  storage?.close();
-
   return { date: new Date(), status };
 };
 

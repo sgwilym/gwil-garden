@@ -70,8 +70,6 @@ export default async function handleRequest(
     if (pathname === `${API_PREFIX}/paths` && request.method === "GET") {
       const paths = storage.paths();
 
-      storage.close();
-
       return json(paths, {
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -84,8 +82,6 @@ export default async function handleRequest(
     if (pathname === `${API_PREFIX}/documents` && request.method === "GET") {
       const docs = storage.documents({ history: "all" });
 
-      storage.close();
-
       return json(docs, {
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -97,8 +93,6 @@ export default async function handleRequest(
       pathname === `${API_PREFIX}/documents` &&
       request.method === "OPTIONS"
     ) {
-      storage.close();
-
       return new Response("ok", {
         headers: {
           "Access-Control-Allow-Headers": "Content-Type",
@@ -151,9 +145,7 @@ export default async function handleRequest(
         });
       });
 
-      Promise.all(promises).then(() => {
-        storage.close();
-      });
+      Promise.all(promises);
 
       return json(
         {
@@ -169,7 +161,6 @@ export default async function handleRequest(
       );
     }
 
-    storage.close();
     // Don't do live streaming.
   }
 

@@ -2,6 +2,8 @@ import { StorageSqlite, ValidatorEs4 } from "earthstar";
 import dotenv from "dotenv";
 import crypto from 'crypto'
 
+var storageSingleton: StorageSqlite | undefined = undefined;
+
 export function getGardenStorage() {
   dotenv.config();
 
@@ -11,12 +13,16 @@ export function getGardenStorage() {
   
   const sqlPath = process.env.NODE_ENV !== "production" ? './data-dev/gwilgarden.sql' : './data/gwilgarden.sql'
 
-  return new StorageSqlite({
-    workspace: process.env.GARDEN_WORKSPACE,
-    filename: sqlPath,
-    mode: "create-or-open",
-    validators: [ValidatorEs4],
-  });
+  if (!storageSingleton) {
+   storageSingleton = new StorageSqlite({
+     workspace: process.env.GARDEN_WORKSPACE,
+     filename: sqlPath,
+     mode: "create-or-open",
+     validators: [ValidatorEs4],
+   });
+  }
+
+  return storageSingleton;
 }
 
 export function getStorageHash(): string {
@@ -30,7 +36,7 @@ export function getStorageHash(): string {
   
   const hash = crypto.createHash("md5").update(JSON.stringify(docs)).digest('hex')
   
-  storage.close();
+  
   
   return hash;
 }

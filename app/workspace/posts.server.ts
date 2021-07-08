@@ -40,11 +40,7 @@ const importFromEarthstarPlugin: Plugin = {
 
       return {};
     });
-    build.onEnd(() => {
-      storage?.close();
-
-      return undefined;
-    });
+    
   },
 };
 
@@ -86,7 +82,7 @@ export function getPost(slug: string): Promise<Post | undefined> {
   if (!doc) {
     const mdxDoc = storage.getDocument(`/garden/posts/${slug}.mdx`);
 
-    storage.close();
+    
 
     if (!mdxDoc) {
       return Promise.resolve(undefined);
@@ -95,7 +91,7 @@ export function getPost(slug: string): Promise<Post | undefined> {
     return docToPost(mdxDoc);
   }
 
-  storage.close();
+  
 
   return docToPost(doc);
 }
@@ -121,7 +117,7 @@ export function getPosts(): Promise<Post[]> {
     contentLengthGt: 0,
   });
 
-  storage.close();
+  
 
   return Promise.all([...docs, ...mdxDocs].map(docToPost));
 }
