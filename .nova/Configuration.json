@@ -1,4 +1,5 @@
 {
+  "co.gwil.deno.enable" : false,
   "workspace.color" : 5,
   "workspace.preview_append_paths" : false,
   "workspace.preview_root" : "app\/routes",

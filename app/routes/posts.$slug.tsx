@@ -1,11 +1,11 @@
 import * as React from "react";
 import {
-  useRouteData,
+  HeadersFunction,
   json,
   LoaderFunction,
   MetaFunction,
   redirect,
-  HeadersFunction,
+  useRouteData,
 } from "remix";
 
 import { getPost, Post } from "../workspace/posts.server";
@@ -43,7 +43,7 @@ export let loader: LoaderFunction = async ({ params }) => {
       headers: {
         Etag: postEtag,
       },
-    }
+    },
   );
 };
 
@@ -52,7 +52,7 @@ type LoaderType = {
 };
 
 function H2(props: {}) {
-  return <h2 {...props} className={"text-2xl font-display"} />;
+  return <h2 {...props} className={"text-2xl font-display mb-5 mt-8"} />;
 }
 
 function H3(props: {}) {
@@ -72,7 +72,15 @@ function ListItem(props: {}) {
 }
 
 function UnorderedList(props: {}) {
-  return <ul className={"space-y-3 pl-5"} {...props} />;
+  return <ul className={"space-y-3 pl-5 mb-6"} {...props} />;
+}
+
+function Code(props: {}) {
+  return <code className={"bg-gray-100 text-sm p-1"} {...props} />;
+}
+
+function Paragraph(props: {}) {
+  return <p className={"mb-6 leading-6"} {...props} />;
 }
 
 export default function Post() {
@@ -80,27 +88,33 @@ export default function Post() {
 
   const Component = React.useMemo(
     () => getMDXComponent(post.code),
-    [post.code]
+    [post.code],
   );
 
   return (
-    <article className={"py-4 space-y-3 max-w-prose m-auto leading-normal"}>
+    <article className={"py-4 max-w-prose m-auto"}>
       <header>
         <h1 className={"text-3xl font-display"}>{post.title}</h1>
-        <p className={"text-sm text-gray-400"}>{`${format(
-          new Date(post.published),
-          "PPP"
-        )}`}</p>
+        <p className={"text-sm text-gray-400"}>
+          {`${
+            format(
+              new Date(post.published),
+              "PPP",
+            )
+          }`}
+        </p>
       </header>
 
       <Component
         components={{
+          p: Paragraph,
           a: Link,
           h2: H2,
           h3: H3,
           h4: H4,
           li: ListItem,
           ul: UnorderedList,
+          code: Code,
         }}
       />
     </article>

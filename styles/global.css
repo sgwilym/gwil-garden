@@ -28,4 +28,8 @@
       url("/fonts/DoverSansText-Italic-Web.woff") format("woff");
     font-style: italic;
   }
+  
+  mark {
+    @apply bg-yellow-100 p-1;
+  }
 }
