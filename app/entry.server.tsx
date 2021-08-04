@@ -133,6 +133,7 @@ export default async function handleRequest(
         }
       }
 
+      /*
       const urls = await getInstanceURLs();
 
       const promises = urls.map((url) => {
@@ -143,8 +144,6 @@ export default async function handleRequest(
 
           const ownHash = getStorageHash();
 
-          console.log({ instanceStoreHash, ownHash });
-
           if (instanceStoreHash !== ownHash) {
             return syncLocalAndHttp(storage, url);
           }
@@ -154,6 +153,7 @@ export default async function handleRequest(
       });
 
       Promise.all(promises);
+      */
 
       const results = {
         numIngested: numIngested,
