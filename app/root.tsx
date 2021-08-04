@@ -1,5 +1,5 @@
 import type { LinksFunction, LoaderFunction } from "remix";
-import { Meta, Links, useRouteData, LiveReload } from "remix";
+import { Links, LiveReload, Meta, useRouteData } from "remix";
 import { Outlet } from "react-router-dom";
 import * as InternetTime from "dot-beat-time";
 
@@ -92,9 +92,7 @@ export default function App() {
   return (
     <Document>
       <header
-        className={
-          "mt-6 py-4 bg-white max-w-prose m-auto border-b-2 border-gray-50 flex items-center space-x-4"
-        }
+        className={"mt-6 py-4 bg-white max-w-prose m-auto border-b-2 border-gray-50 flex items-center space-x-4"}
       >
         <img
           className={"bg-yellow-300 p-3"}

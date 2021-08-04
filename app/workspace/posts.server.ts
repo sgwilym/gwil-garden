@@ -14,11 +14,11 @@ export type Post = {
 };
 
 export function isPost(value: any): value is Post {
-  if ('contentHash' in value) {
-    return true
+  if ("contentHash" in value) {
+    return true;
   }
-  
-  return false
+
+  return false;
 }
 
 const importFromEarthstarPlugin: Plugin = {
@@ -32,14 +32,14 @@ const importFromEarthstarPlugin: Plugin = {
     build.onLoad({ filter: /.*/, namespace: "earthstar" }, (args) => {
       const { path } = args;
 
-      if (!storage) {    
+      if (!storage) {
         return args;
       }
 
       const filename = path.replace("./components/", "");
 
       const maybeComponent = storage.getContent(
-        `/garden/posts/components/${filename}`
+        `/garden/posts/components/${filename}`,
       );
 
       if (maybeComponent) {
@@ -48,13 +48,10 @@ const importFromEarthstarPlugin: Plugin = {
 
       return {};
     });
-    
   },
 };
 
-async function docToPost(doc: Document): Promise<Post> {  
-
-  
+async function docToPost(doc: Document): Promise<Post> {
   const result = await bundleMDX(doc.content, {
     esbuildOptions(options) {
       const plugins = options.plugins || [];
@@ -64,7 +61,6 @@ async function docToPost(doc: Document): Promise<Post> {
       return options;
     },
   });
-
 
   const slug = doc.path.replace("/garden/posts/", "").replace(/\.mdx?/, "");
 
@@ -90,16 +86,12 @@ export function getPost(slug: string): Promise<Post | undefined> {
   if (!doc) {
     const mdxDoc = storage.getDocument(`/garden/posts/${slug}.mdx`);
 
-    
-
     if (!mdxDoc) {
       return Promise.resolve(undefined);
     }
 
     return docToPost(mdxDoc);
   }
-
-  
 
   return docToPost(doc);
 }
@@ -124,8 +116,6 @@ export function getPosts(): Promise<Post[]> {
     author: ES_AUTHOR_ADDRESS,
     contentLengthGt: 0,
   });
-
-  
 
   return Promise.all([...docs, ...mdxDocs].map(docToPost));
 }

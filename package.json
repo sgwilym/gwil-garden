@@ -19,6 +19,7 @@
     "dot-beat-time": "^1.2.1",
     "dotenv": "^10.0.0",
     "earthstar": "^6.8.5",
+    "earthstar-graph-db": "^2.0.0",
     "etag": "^1.8.1",
     "mdx-bundler": "^4.0.0",
     "react": "^17.0.1",

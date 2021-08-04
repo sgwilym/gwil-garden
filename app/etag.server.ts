@@ -1,1 +1,1 @@
-export { default as default } from 'etag'
+export { default as default } from "etag";

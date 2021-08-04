@@ -1,16 +1,16 @@
 import { format } from "date-fns";
 import {
-  MetaFunction,
+  HeadersFunction,
+  json,
   LinksFunction,
   LoaderFunction,
-  json,
+  MetaFunction,
   useRouteData,
-  HeadersFunction,
 } from "remix";
 import MicroPost from "../components/MicroPost";
 
 import stylesUrl from "../styles/index.css";
-import { getLobbyPosts, LobbyPost } from "../workspace/lobby.server";
+import { getStarredLobbyPosts, LobbyPost } from "../workspace/lobby.server";
 import { getPosts, isPost, Post } from "../workspace/posts.server";
 
 export let meta: MetaFunction = () => {
@@ -44,7 +44,7 @@ export let loader: LoaderFunction = async () => {
   // load all the blog posts from workspace.
 
   const posts = await getPosts();
-  const lobbies = getLobbyPosts();
+  const lobbies = getStarredLobbyPosts();
 
   return json(
     { posts, lobbies },
@@ -53,7 +53,7 @@ export let loader: LoaderFunction = async () => {
         "Cache-Control":
           "max-age=600, s-maxage=604800, stale-while-revalidate=604800",
       },
-    }
+    },
   );
 };
 
@@ -62,16 +62,18 @@ function PostLink({ post, className }: { post: Post; className: string }) {
     <li className={className}>
       <a className={"group"} href={`/posts/${post.slug}`}>
         <h1
-          className={
-            "font-display text-3xl group-hover:text-yellow-400 transition"
-          }
+          className={"font-display text-3xl group-hover:text-yellow-400 transition"}
         >
           {post.title}
         </h1>
-        <p className={"text-sm text-gray-400"}>{`${format(
-          new Date(post.published),
-          "PPP"
-        )}`}</p>
+        <p className={"text-sm text-gray-400"}>
+          {`${
+            format(
+              new Date(post.published),
+              "PPP",
+            )
+          }`}
+        </p>
       </a>
     </li>
   );

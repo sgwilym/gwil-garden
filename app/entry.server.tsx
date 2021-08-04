@@ -1,9 +1,9 @@
 import ReactDOMServer from "react-dom/server";
 import type { EntryContext } from "remix";
-import { RemixServer, json } from "remix";
+import { json, RemixServer } from "remix";
 import dotenv from "dotenv";
 import { getGardenStorage, getStorageHash } from "./workspace/storage.server";
-import { Document, WriteResult, syncLocalAndHttp } from "earthstar";
+import { Document, syncLocalAndHttp, WriteResult } from "earthstar";
 import { ES_AUTHOR_ADDRESS } from "./constants";
 import { lobbyRss, postsRss } from "./rss.server";
 import { getPost } from "./workspace/posts.server";
@@ -14,7 +14,7 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
 ) {
   dotenv.config();
 
@@ -24,7 +24,7 @@ export default async function handleRequest(
 
   if (
     new URL(request.url).pathname ===
-    `/${process.env.GARDEN_WORKSPACE}/store-hash`
+      `/${process.env.GARDEN_WORKSPACE}/store-hash`
   ) {
     return new Response(getStorageHash(), {
       status: 200,
@@ -174,7 +174,7 @@ export default async function handleRequest(
   }
 
   let markup = ReactDOMServer.renderToString(
-    <RemixServer context={remixContext} url={request.url} />
+    <RemixServer context={remixContext} url={request.url} />,
   );
 
   return new Response("<!DOCTYPE html>" + markup, {
