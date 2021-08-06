@@ -10,20 +10,24 @@ import { getPost } from "./workspace/posts.server";
 import etag from "./etag.server";
 import { getInstanceURLs } from "./workspace/instances.server";
 
+dotenv.config();
+
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
 ) {
-  dotenv.config();
+  
 
   if (process.env.NODE_ENV !== "production") {
     responseHeaders.set("Cache-Control", "no-store");
   }
+  
+  const requestUrl = new URL(request.url);
 
   if (
-    new URL(request.url).pathname ===
+    requestUrl.pathname ===
       `/${process.env.GARDEN_WORKSPACE}/store-hash`
   ) {
     return new Response(getStorageHash(), {
@@ -31,7 +35,7 @@ export default async function handleRequest(
     });
   }
 
-  if (new URL(request.url).pathname.startsWith("/posts/")) {
+  if (requestUrl.pathname.startsWith("/posts/")) {
     const slug = new URL(request.url).pathname.replace("/posts/", "");
 
     const post = await getPost(slug);
@@ -45,7 +49,7 @@ export default async function handleRequest(
     }
   }
 
-  if (new URL(request.url).pathname === "/rss/posts.xml") {
+  if (requestUrl.pathname === "/rss/posts.xml") {
     return new Response(await postsRss(), {
       headers: {
         "Content-Type": "application/xml",
@@ -53,7 +57,7 @@ export default async function handleRequest(
     });
   }
 
-  if (new URL(request.url).pathname === "/rss/microposts.xml") {
+  if (requestUrl.pathname === "/rss/microposts.xml") {
     return new Response(await lobbyRss(), {
       headers: {
         "Content-Type": "application/xml",
@@ -61,10 +65,12 @@ export default async function handleRequest(
     });
   }
 
-  const pathname = new URL(request.url).pathname;
+  const { pathname } = requestUrl;
   const API_PREFIX = `/earthstar-api/v1/${process.env.GARDEN_WORKSPACE}`;
 
   if (pathname.startsWith(API_PREFIX)) {
+    console.log('Hit Earthstar API')
+    
     const storage = getGardenStorage();
 
     if (!storage) {
@@ -72,6 +78,8 @@ export default async function handleRequest(
         status: 404,
       });
     }
+    
+    console.log('Got storage.')
 
     // list paths
     // /earthstar-api/v1/:workspace/paths
@@ -112,16 +120,24 @@ export default async function handleRequest(
 
     // ingest documents (uploaded from client)
     // /earthstar-api/v1/:workspace/documents
+    
+  
     if (pathname === `${API_PREFIX}/documents` && request.method === "POST") {
-      const docs: Document[] = await request.json();
-
-      if (!Array.isArray(docs)) {
-        return new Response(undefined, { status: 404 });
-      }
+      
+      
+      
+      const docs: Document[] = await request.json()
+      
+      
+      
+    
+      
+      
+    
 
       let numIngested = 0;
       for (let doc of docs) {
-        // Only sync docs from gwil
+        // Only sync docs frov\m gwil
         if (doc.author !== ES_AUTHOR_ADDRESS) {
           return;
         }
@@ -161,11 +177,13 @@ export default async function handleRequest(
         numTotal: docs.length,
       };
 
-      console.log(results);
+      const contentLength =
+        (new TextEncoder().encode(JSON.stringify(results))).length;
 
       return json(results, {
         headers: {
           "Access-Control-Allow-Origin": "*",
+          "Content-Length": `${contentLength}`,
         },
       });
     }
@@ -174,14 +192,13 @@ export default async function handleRequest(
   }
 
   let markup = ReactDOMServer.renderToString(
-    <RemixServer context={remixContext} url={request.url} />,
+    <RemixServer context={remixContext} url={request.url} />
   );
+
+  responseHeaders.set("Content-Type", "text/html");
 
   return new Response("<!DOCTYPE html>" + markup, {
     status: responseStatusCode,
-    headers: {
-      ...Object.fromEntries(responseHeaders),
-      "Content-Type": "text/html",
-    },
+    headers: responseHeaders
   });
 }

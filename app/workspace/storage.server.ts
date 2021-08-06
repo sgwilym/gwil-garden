@@ -1,11 +1,9 @@
 import { StorageSqlite, ValidatorEs4 } from "earthstar";
-import dotenv from "dotenv";
 import crypto from "crypto";
 
 var storageSingleton: StorageSqlite | undefined = undefined;
 
 export function getGardenStorage() {
-  dotenv.config();
 
   if (!process.env.GARDEN_WORKSPACE) {
     return undefined;

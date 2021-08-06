@@ -1,4 +1,4 @@
-import { json, LoaderFunction, redirect, useRouteData } from "remix";
+import { json, LoaderFunction, redirect, useLoaderData } from "remix";
 import MicroPost from "../../components/MicroPost";
 import { getLobbyPosts, LobbyPost } from "../../workspace/lobby.server";
 
@@ -21,13 +21,13 @@ function borderClassname(i: number, arr: Array<any>): string {
 }
 
 export default function MicroPosts() {
-  const { microPosts } = useRouteData<{ microPosts: LobbyPost[] }>();
+  const { microPosts } = useLoaderData<{ microPosts: LobbyPost[] }>();
 
   return (
     <ol className={"max-w-prose m-auto my-4 space-y-4"}>
       {microPosts.map((post, i, arr) => {
         return (
-          <MicroPost className={borderClassname(i, arr)} lobbyPost={post} />
+          <MicroPost key={post.timestamp} className={borderClassname(i, arr)} lobbyPost={post} />
         );
       })}
     </ol>

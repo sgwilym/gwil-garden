@@ -1,5 +1,5 @@
 import type { LinksFunction, LoaderFunction } from "remix";
-import { Links, LiveReload, Meta, useRouteData } from "remix";
+import { Links, LiveReload, Meta, useLoaderData } from "remix";
 import { Outlet } from "react-router-dom";
 import * as InternetTime from "dot-beat-time";
 
@@ -87,7 +87,7 @@ function Document({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const data = useRouteData();
+  const data = useLoaderData();
 
   return (
     <Document>
@@ -112,14 +112,17 @@ export default function App() {
           </p>
         </div>
       </header>
+      
       <Outlet />
+        
       <footer className={"text-gray-300 max-w-prose m-auto py-6"}>
         <p>
           This page was rendered at{" "}
           <a className={"underline"} href="http://gwil.co/internet-time/">
             {InternetTime.now()}
-          </a>
+          </a>.
         </p>
+        <p>Other identities: <a className="underline" href="https://gwil.co/vouch">https://gwil.co/vouch</a></p>
       </footer>
     </Document>
   );

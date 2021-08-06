@@ -5,7 +5,7 @@ import {
   LinksFunction,
   LoaderFunction,
   MetaFunction,
-  useRouteData,
+  useLoaderData,
 } from "remix";
 import MicroPost from "../components/MicroPost";
 
@@ -80,8 +80,10 @@ function PostLink({ post, className }: { post: Post; className: string }) {
 }
 
 export default function Index() {
-  let data = useRouteData<IndexLoaderType>();
-
+  
+  
+  let data = useLoaderData<IndexLoaderType>();
+    
   const everythingSorted = [...data.posts, ...data.lobbies].sort((a, b) => {
     if (a.published < b.published) {
       return 1;

@@ -5,7 +5,7 @@ import {
   LoaderFunction,
   MetaFunction,
   redirect,
-  useRouteData,
+  useLoaderData,
 } from "remix";
 
 import { getPost, Post } from "../workspace/posts.server";
@@ -29,7 +29,7 @@ export let headers: HeadersFunction = ({ loaderHeaders }) => {
 };
 
 export let loader: LoaderFunction = async ({ params }) => {
-  const post = await getPost(params.slug);
+  const post = await getPost(params.slug || "");
 
   if (!post) {
     return redirect("/404");
@@ -84,7 +84,7 @@ function Paragraph(props: {}) {
 }
 
 export default function Post() {
-  const { post } = useRouteData<LoaderType>();
+  const { post } = useLoaderData<LoaderType>();
 
   const Component = React.useMemo(
     () => getMDXComponent(post.code),
