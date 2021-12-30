@@ -16,20 +16,15 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext,
+  remixContext: EntryContext
 ) {
-  
-
   if (process.env.NODE_ENV !== "production") {
     responseHeaders.set("Cache-Control", "no-store");
   }
-  
+
   const requestUrl = new URL(request.url);
 
-  if (
-    requestUrl.pathname ===
-      `/${process.env.GARDEN_WORKSPACE}/store-hash`
-  ) {
+  if (requestUrl.pathname === `/${process.env.GARDEN_WORKSPACE}/store-hash`) {
     return new Response(getStorageHash(), {
       status: 200,
     });
@@ -67,10 +62,9 @@ export default async function handleRequest(
 
   const { pathname } = requestUrl;
   const API_PREFIX = `/earthstar-api/v1/${process.env.GARDEN_WORKSPACE}`;
+  const API_ONCE_PREFIX = `/once${API_PREFIX}`;
 
-  if (pathname.startsWith(API_PREFIX)) {
-    console.log('Hit Earthstar API')
-    
+  if (pathname.startsWith(API_PREFIX) || pathname.startsWith(API_ONCE_PREFIX)) {
     const storage = getGardenStorage();
 
     if (!storage) {
@@ -78,12 +72,14 @@ export default async function handleRequest(
         status: 404,
       });
     }
-    
-    console.log('Got storage.')
 
     // list paths
     // /earthstar-api/v1/:workspace/paths
-    if (pathname === `${API_PREFIX}/paths` && request.method === "GET") {
+    if (
+      (pathname === `${API_PREFIX}/paths` ||
+        pathname === `${API_ONCE_PREFIX}/paths`) &&
+      request.method === "GET"
+    ) {
       const paths = storage.paths();
 
       return json(paths, {
@@ -95,7 +91,11 @@ export default async function handleRequest(
 
     // get all documents
     // /earthstar-api/v1/:workspace/documents
-    if (pathname === `${API_PREFIX}/documents` && request.method === "GET") {
+    if (
+      (pathname === `${API_PREFIX}/documents` ||
+        pathname === `${API_ONCE_PREFIX}/documents`) &&
+      request.method === "GET"
+    ) {
       const docs = storage.documents({ history: "all" });
 
       return json(docs, {
@@ -106,7 +106,8 @@ export default async function handleRequest(
     }
 
     if (
-      pathname === `${API_PREFIX}/documents` &&
+      (pathname === `${API_PREFIX}/documents` ||
+        pathname === `${API_ONCE_PREFIX}/documents}`) &&
       request.method === "OPTIONS"
     ) {
       return new Response("ok", {
@@ -120,24 +121,17 @@ export default async function handleRequest(
 
     // ingest documents (uploaded from client)
     // /earthstar-api/v1/:workspace/documents
-    
-  
-    if (pathname === `${API_PREFIX}/documents` && request.method === "POST") {
-      
-      
-      
-      const docs: Document[] = await request.json()
-      
-      
-      
-    
-      
-      
-    
+
+    if (
+      (pathname === `${API_PREFIX}/documents` ||
+        pathname === `${API_ONCE_PREFIX}/documents`) &&
+      request.method === "POST"
+    ) {
+      const docs: Document[] = await request.json();
 
       let numIngested = 0;
       for (let doc of docs) {
-        // Only sync docs frov\m gwil
+        // Only sync docs from gwil
         if (doc.author !== ES_AUTHOR_ADDRESS) {
           return;
         }
@@ -149,27 +143,22 @@ export default async function handleRequest(
         }
       }
 
-      /*
-      const urls = await getInstanceURLs();
+      if (pathname !== `${API_ONCE_PREFIX}/documents`) {
+        const urlsSet = await getInstanceURLs();
+        const urls = Array.from(urlsSet);
 
-      const promises = urls.map((url) => {
-        return new Promise(async (resolve) => {
-          const fetchFrom = `${url}/${process.env.GARDEN_WORKSPACE}/store-hash`;
-          const response = await fetch(fetchFrom);
-          const instanceStoreHash = await response.text();
+        const promises = urls.map((url) => {
+          console.log(`Syncing with ${url}...`);
 
-          const ownHash = getStorageHash();
-
-          if (instanceStoreHash !== ownHash) {
-            return syncLocalAndHttp(storage, url);
-          }
-
-          resolve("");
+          return syncLocalAndHttp(storage, `${url}/once`);
         });
-      });
 
-      Promise.all(promises);
-      */
+        await Promise.all(promises);
+
+        if (urls.length > 0) {
+          console.log("Synced with all instances!");
+        }
+      }
 
       const results = {
         numIngested: numIngested,
@@ -177,13 +166,9 @@ export default async function handleRequest(
         numTotal: docs.length,
       };
 
-      const contentLength =
-        (new TextEncoder().encode(JSON.stringify(results))).length;
-
       return json(results, {
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Content-Length": `${contentLength}`,
         },
       });
     }
@@ -199,6 +184,6 @@ export default async function handleRequest(
 
   return new Response("<!DOCTYPE html>" + markup, {
     status: responseStatusCode,
-    headers: responseHeaders
+    headers: responseHeaders,
   });
 }

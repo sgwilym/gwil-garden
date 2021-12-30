@@ -43,7 +43,7 @@ export let loader: LoaderFunction = async ({ params }) => {
       headers: {
         Etag: postEtag,
       },
-    },
+    }
   );
 };
 
@@ -56,7 +56,7 @@ function H2(props: {}) {
 }
 
 function H3(props: {}) {
-  return <h3 {...props} className={"text-xl"} />;
+  return <h3 {...props} className={"text-xl mt-8"} />;
 }
 
 function H4(props: {}) {
@@ -72,7 +72,7 @@ function ListItem(props: {}) {
 }
 
 function UnorderedList(props: {}) {
-  return <ul className={"space-y-3 pl-5 mb-6"} {...props} />;
+  return <ul className={"pl-5 mb-8 leading-7"} {...props} />;
 }
 
 function Code(props: {}) {
@@ -80,7 +80,7 @@ function Code(props: {}) {
 }
 
 function Paragraph(props: {}) {
-  return <p className={"mb-6 leading-6"} {...props} />;
+  return <p className={"mb-4 leading-7"} {...props} />;
 }
 
 export default function Post() {
@@ -88,7 +88,7 @@ export default function Post() {
 
   const Component = React.useMemo(
     () => getMDXComponent(post.code),
-    [post.code],
+    [post.code]
   );
 
   return (
@@ -96,12 +96,7 @@ export default function Post() {
       <header>
         <h1 className={"text-3xl font-display"}>{post.title}</h1>
         <p className={"text-sm text-gray-400"}>
-          {`${
-            format(
-              new Date(post.published),
-              "PPP",
-            )
-          }`}
+          {`${format(new Date(post.published), "PPP")}`}
         </p>
       </header>
 

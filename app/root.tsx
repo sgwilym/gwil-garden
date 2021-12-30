@@ -92,7 +92,9 @@ export default function App() {
   return (
     <Document>
       <header
-        className={"mt-6 py-4 bg-white max-w-prose m-auto border-b-2 border-gray-50 flex items-center space-x-4"}
+        className={
+          "mt-6 py-4 bg-white max-w-prose m-auto border-b-2 border-gray-50 flex items-center space-x-4"
+        }
       >
         <img
           className={"bg-yellow-300 p-3"}
@@ -112,17 +114,17 @@ export default function App() {
           </p>
         </div>
       </header>
-      
+
       <Outlet />
-        
+
       <footer className={"text-gray-300 max-w-prose m-auto py-6"}>
         <p>
           This page was rendered at{" "}
           <a className={"underline"} href="http://gwil.co/internet-time/">
             {InternetTime.now()}
-          </a>.
+          </a>
+          .
         </p>
-        <p>Other identities: <a className="underline" href="https://gwil.co/vouch">https://gwil.co/vouch</a></p>
       </footer>
     </Document>
   );
