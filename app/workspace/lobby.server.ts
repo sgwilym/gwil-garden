@@ -1,7 +1,6 @@
-import { Document, isErr } from "earthstar";
-import { findEdgesSync, GraphEdgeContent } from "earthstar-graph-db";
+import { Doc, isErr } from "earthstar";
 import { ES_AUTHOR_ADDRESS } from "../constants";
-import { getGardenStorage } from "./storage.server";
+import { getGardenReplica } from "./storage.server";
 
 export type LobbyPost = {
   content: string;
@@ -9,7 +8,7 @@ export type LobbyPost = {
   published: Date;
 };
 
-export function sortByPublished(docA: Document, docB: Document) {
+export function sortByPublished(docA: Doc, docB: Doc) {
   const aTimestamp = getLobbyDocPublishedTimestamp(docA);
   const bTimestamp = getLobbyDocPublishedTimestamp(docB);
 
@@ -18,7 +17,7 @@ export function sortByPublished(docA: Document, docB: Document) {
 
 const pathTimestampRegex = /(\d*)(?:\.txt)/;
 
-export function getLobbyDocPublishedTimestamp(doc: Document): number {
+export function getLobbyDocPublishedTimestamp(doc: Doc): number {
   const result = pathTimestampRegex.exec(doc.path);
 
   if (result === null) {
@@ -28,7 +27,7 @@ export function getLobbyDocPublishedTimestamp(doc: Document): number {
   return parseInt(result[0]);
 }
 
-function lobbyPostFromDoc(doc: Document): LobbyPost {
+function lobbyPostFromDoc(doc: Doc): LobbyPost {
   const timestamp = getLobbyDocPublishedTimestamp(doc);
 
   return {
@@ -38,17 +37,19 @@ function lobbyPostFromDoc(doc: Document): LobbyPost {
   };
 }
 
-export function getLobbyPosts(): LobbyPost[] {
-  const storage = getGardenStorage();
+export async function getLobbyPosts(): Promise<LobbyPost[]> {
+  const replica = getGardenReplica();
 
-  if (!storage) {
+  if (!replica) {
     return [];
   }
 
-  const posts = storage?.documents({
-    pathStartsWith: `/lobby/~${ES_AUTHOR_ADDRESS}/`,
-    pathEndsWith: ".txt",
-    contentLengthGt: 0,
+  const posts = await replica?.queryDocs({
+    filter: {
+      pathStartsWith: `/lobby/~${ES_AUTHOR_ADDRESS}/`,
+      pathEndsWith: ".txt",
+      contentLengthGt: 0,
+    }
   });
 
   return posts.map(lobbyPostFromDoc).sort((aPost, bPost) =>
@@ -56,8 +57,9 @@ export function getLobbyPosts(): LobbyPost[] {
   );
 }
 
+/*
 export function getStarredLobbyPosts(): LobbyPost[] {
-  const storage = getGardenStorage();
+  const storage = getGardenReplica();
 
   if (!storage) {
     return [];
@@ -87,11 +89,12 @@ export function getStarredLobbyPosts(): LobbyPost[] {
 
   return posts;
 }
+*/
 
-export function getLobbyPost(timestamp: number): LobbyPost | undefined {
-  const storage = getGardenStorage();
+export async function getLobbyPost(timestamp: number): Promise<LobbyPost | undefined> {
+  const replica = getGardenReplica();
 
-  if (!storage) {
+  if (!replica) {
     return undefined;
   }
 
@@ -99,10 +102,12 @@ export function getLobbyPost(timestamp: number): LobbyPost | undefined {
   // So that we can also get any ephemeral documents
   // If there are somehow two (unlikely)
   // Just use the first one
-  const [post] = storage?.documents({
-    pathStartsWith: `/lobby/~${ES_AUTHOR_ADDRESS}/`,
-    pathEndsWith: `${timestamp}.txt`,
-    contentLengthGt: 0,
+  const [post] = await replica?.queryDocs({
+    filter: {
+      pathStartsWith: `/lobby/~${ES_AUTHOR_ADDRESS}/`,
+      pathEndsWith: `${timestamp}.txt`,
+      contentLengthGt: 0,
+    },
   });
 
   return post ? lobbyPostFromDoc(post) : undefined;

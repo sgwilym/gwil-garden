@@ -1,6 +1,6 @@
-import { Document } from "earthstar";
+import { Doc } from "earthstar";
 import { bundleMDX } from "mdx-bundler";
-import { getGardenStorage } from "./storage.server";
+import { getGardenReplica } from "./storage.server";
 import { ES_AUTHOR_ADDRESS } from "../constants";
 import { Plugin } from "esbuild";
 
@@ -24,26 +24,26 @@ export function isPost(value: any): value is Post {
 const importFromEarthstarPlugin: Plugin = {
   name: "earthstar",
   setup(build) {
-    const storage = getGardenStorage();
+    const replica = getGardenReplica();
     build.onResolve({ filter: /.*\/components\/.*/ }, (args) => ({
       path: args.path,
       namespace: "earthstar",
     }));
-    build.onLoad({ filter: /.*/, namespace: "earthstar" }, (args) => {
+    build.onLoad({ filter: /.*/, namespace: "earthstar" }, async (args) => {
       const { path } = args;
 
-      if (!storage) {
+      if (!replica) {
         return args;
       }
 
       const filename = path.replace("./components/", "");
 
-      const maybeComponent = storage.getContent(
+      const maybeComponentDoc = await replica.getLatestDocAtPath(
         `/garden/posts/components/${filename}`,
       );
 
-      if (maybeComponent) {
-        return { contents: maybeComponent, loader: "tsx" };
+      if (maybeComponentDoc) {
+        return { contents: maybeComponentDoc.content, loader: "tsx" };
       }
 
       return {};
@@ -51,7 +51,7 @@ const importFromEarthstarPlugin: Plugin = {
   },
 };
 
-async function docToPost(doc: Document): Promise<Post> {
+async function docToPost(doc: Doc): Promise<Post> {
   const result = await bundleMDX(doc.content, {
     esbuildOptions(options) {
       const plugins = options.plugins || [];
@@ -74,17 +74,17 @@ async function docToPost(doc: Document): Promise<Post> {
   };
 }
 
-export function getPost(slug: string): Promise<Post | undefined> {
-  const storage = getGardenStorage();
+export async function getPost(slug: string): Promise<Post | undefined> {
+  const replica = getGardenReplica();
 
-  if (!storage) {
+  if (!replica) {
     return Promise.resolve(undefined);
   }
 
-  const doc = storage.getDocument(`/garden/posts/${slug}.md`);
+  const doc = await replica.getLatestDocAtPath(`/garden/posts/${slug}.md`);
 
   if (!doc) {
-    const mdxDoc = storage.getDocument(`/garden/posts/${slug}.mdx`);
+    const mdxDoc = await replica.getLatestDocAtPath(`/garden/posts/${slug}.mdx`);
 
     if (!mdxDoc) {
       return Promise.resolve(undefined);
@@ -96,25 +96,29 @@ export function getPost(slug: string): Promise<Post | undefined> {
   return docToPost(doc);
 }
 
-export function getPosts(): Promise<Post[]> {
-  const storage = getGardenStorage();
+export async function getPosts(): Promise<Post[]> {
+  const replica = getGardenReplica();
 
-  if (!storage) {
+  if (!replica) {
     return Promise.resolve([]);
   }
 
-  const docs = storage.documents({
-    pathStartsWith: "/garden/posts/",
-    pathEndsWith: ".md",
-    author: ES_AUTHOR_ADDRESS,
-    contentLengthGt: 0,
+  const docs = await replica.queryDocs({
+    filter: {
+      pathStartsWith: "/garden/posts/",
+      pathEndsWith: ".md",
+      author: ES_AUTHOR_ADDRESS,
+      contentLengthGt: 0,
+    }
   });
 
-  const mdxDocs = storage.documents({
-    pathStartsWith: "/garden/posts/",
-    pathEndsWith: ".mdx",
-    author: ES_AUTHOR_ADDRESS,
-    contentLengthGt: 0,
+  const mdxDocs = await replica.queryDocs({
+    filter: {
+      pathStartsWith: "/garden/posts/",
+      pathEndsWith: ".mdx",
+      author: ES_AUTHOR_ADDRESS,
+      contentLengthGt: 0,
+    }
   });
 
   return Promise.all([...docs, ...mdxDocs].map(docToPost));

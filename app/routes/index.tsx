@@ -10,7 +10,7 @@ import {
 import MicroPost from "../components/MicroPost";
 
 import stylesUrl from "../styles/index.css";
-import { getStarredLobbyPosts, LobbyPost } from "../workspace/lobby.server";
+import { getLobbyPosts, LobbyPost } from "../workspace/lobby.server";
 import { getPosts, isPost, Post } from "../workspace/posts.server";
 
 export let meta: MetaFunction = () => {
@@ -44,7 +44,7 @@ export let loader: LoaderFunction = async () => {
   // load all the blog posts from workspace.
 
   const posts = await getPosts();
-  const lobbies = getStarredLobbyPosts();
+  const lobbies = await getLobbyPosts();
 
   return json(
     { posts, lobbies },

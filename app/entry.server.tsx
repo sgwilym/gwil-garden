@@ -2,8 +2,12 @@ import ReactDOMServer from "react-dom/server";
 import type { EntryContext } from "remix";
 import { json, RemixServer } from "remix";
 import dotenv from "dotenv";
-import { getGardenStorage, getStorageHash } from "./workspace/storage.server";
-import { Document, syncLocalAndHttp, WriteResult } from "earthstar";
+import { getGardenReplica, getStorageHash } from "./workspace/storage.server";
+import { Doc, Peer, Syncer } from "earthstar";
+import {
+  TransportHttpClient,
+  TransportHttpServer,
+} from "earthstar-streaming-rpc";
 import { ES_AUTHOR_ADDRESS } from "./constants";
 import { lobbyRss, postsRss } from "./rss.server";
 import { getPost } from "./workspace/posts.server";
@@ -12,11 +16,41 @@ import { getInstanceURLs } from "./workspace/instances.server";
 
 dotenv.config();
 
+// Start syncing with other instances.
+
+const peer = new Peer();
+const replica = getGardenReplica();
+
+if (replica) {
+  peer.addReplica(replica);
+}
+
+getInstanceURLs().then((instances) => {
+  const syncer = new Syncer(peer, (methods) => {
+    return new TransportHttpClient({
+      deviceId: peer.peerId,
+      methods,
+    });
+  });
+
+  for (const instance of instances) {
+    syncer.transport.addConnection(`${instance}/earthstar-api/v2`);
+  }
+});
+
+const serverSyncer = new Syncer(peer, (methods) => {
+  return new TransportHttpServer({
+    deviceId: peer.peerId,
+    methods,
+    path: "/earthstar-api/v2/",
+  });
+});
+
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
 ) {
   if (process.env.NODE_ENV !== "production") {
     responseHeaders.set("Cache-Control", "no-store");
@@ -62,12 +96,22 @@ export default async function handleRequest(
 
   const { pathname } = requestUrl;
   const API_PREFIX = `/earthstar-api/v1/${process.env.GARDEN_WORKSPACE}`;
-  const API_ONCE_PREFIX = `/once${API_PREFIX}`;
+  const API_2_PREFIX = `/earthstar-api/v2`;
 
-  if (pathname.startsWith(API_PREFIX) || pathname.startsWith(API_ONCE_PREFIX)) {
-    const storage = getGardenStorage();
+  if (pathname.startsWith(API_2_PREFIX)) {
+    console.log(request);
 
-    if (!storage) {
+    const res = serverSyncer.transport.handler(request as unknown as any);
+
+    console.log(res);
+
+    return res;
+  }
+
+  if (pathname.startsWith(API_PREFIX)) {
+    const replica = getGardenReplica();
+
+    if (!replica) {
       return new Response(undefined, {
         status: 404,
       });
@@ -76,11 +120,11 @@ export default async function handleRequest(
     // list paths
     // /earthstar-api/v1/:workspace/paths
     if (
-      (pathname === `${API_PREFIX}/paths` ||
-        pathname === `${API_ONCE_PREFIX}/paths`) &&
+      pathname === `${API_PREFIX}/paths` &&
       request.method === "GET"
     ) {
-      const paths = storage.paths();
+      const docs = await replica.getLatestDocs();
+      const paths = docs.map(({ path }) => path);
 
       return json(paths, {
         headers: {
@@ -92,11 +136,10 @@ export default async function handleRequest(
     // get all documents
     // /earthstar-api/v1/:workspace/documents
     if (
-      (pathname === `${API_PREFIX}/documents` ||
-        pathname === `${API_ONCE_PREFIX}/documents`) &&
+      pathname === `${API_PREFIX}/documents` &&
       request.method === "GET"
     ) {
-      const docs = storage.documents({ history: "all" });
+      const docs = replica.getAllDocs();
 
       return json(docs, {
         headers: {
@@ -106,8 +149,7 @@ export default async function handleRequest(
     }
 
     if (
-      (pathname === `${API_PREFIX}/documents` ||
-        pathname === `${API_ONCE_PREFIX}/documents}`) &&
+      pathname === `${API_PREFIX}/documents` &&
       request.method === "OPTIONS"
     ) {
       return new Response("ok", {
@@ -123,11 +165,10 @@ export default async function handleRequest(
     // /earthstar-api/v1/:workspace/documents
 
     if (
-      (pathname === `${API_PREFIX}/documents` ||
-        pathname === `${API_ONCE_PREFIX}/documents`) &&
+      pathname === `${API_PREFIX}/documents` &&
       request.method === "POST"
     ) {
-      const docs: Document[] = await request.json();
+      const docs: Doc[] = await request.json();
 
       let numIngested = 0;
       for (let doc of docs) {
@@ -136,27 +177,10 @@ export default async function handleRequest(
           return;
         }
 
-        const result = storage.ingestDocument(doc, "🙂");
+        const result = await replica.ingest(doc);
 
-        if (result === WriteResult.Accepted) {
+        if (result.kind === "success") {
           numIngested += 1;
-        }
-      }
-
-      if (pathname !== `${API_ONCE_PREFIX}/documents`) {
-        const urlsSet = await getInstanceURLs();
-        const urls = Array.from(urlsSet);
-
-        const promises = urls.map((url) => {
-          console.log(`Syncing with ${url}...`);
-
-          return syncLocalAndHttp(storage, `${url}/once`);
-        });
-
-        await Promise.all(promises);
-
-        if (urls.length > 0) {
-          console.log("Synced with all instances!");
         }
       }
 
@@ -177,7 +201,7 @@ export default async function handleRequest(
   }
 
   let markup = ReactDOMServer.renderToString(
-    <RemixServer context={remixContext} url={request.url} />
+    <RemixServer context={remixContext} url={request.url} />,
   );
 
   responseHeaders.set("Content-Type", "text/html");

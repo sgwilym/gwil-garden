@@ -1,13 +1,14 @@
-import { StorageSqlite, ValidatorEs4 } from "earthstar";
+import { Replica, FormatValidatorEs4 } from "earthstar";
+import { ReplicaDriverSqlite } from 'earthstar/node'
 import crypto from "crypto";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from 'path';
 
-var storageSingleton: StorageSqlite | undefined = undefined;
+var replicaSingleton: Replica | undefined = undefined;
 dotenv.config();
 
-export function getGardenStorage() {
+export function getGardenReplica() {
   if (!process.env.GARDEN_WORKSPACE) {
     return undefined;
   }
@@ -19,28 +20,29 @@ export function getGardenStorage() {
     fs.mkdirSync(dataDir);
   }
   
-  if (!storageSingleton) {
+  if (!replicaSingleton) {
     console.log("No storage yet, instantiating...");
 
-    storageSingleton = new StorageSqlite({
-      workspace: process.env.GARDEN_WORKSPACE,
-      filename: `${dataDir}/gwilgarden.sql`,
-      mode: "create-or-open",
-      validators: [ValidatorEs4],
-    });
+    const driver = new ReplicaDriverSqlite({
+      filename: `${dataDir}/gwilgarden_stone_soup.sql`,
+      mode: 'create-or-open',
+      share: process.env.GARDEN_WORKSPACE
+    })
+
+    replicaSingleton = new Replica(process.env.GARDEN_WORKSPACE, FormatValidatorEs4, driver)
   }
 
-  return storageSingleton;
+  return replicaSingleton;
 }
 
 export function getStorageHash(): string {
-  const storage = getGardenStorage();
+  const storage = getGardenReplica();
 
   if (!storage) {
     return "";
   }
 
-  const docs = storage.documents();
+  const docs = storage.getAllDocs();
 
   const hash = crypto
     .createHash("md5")

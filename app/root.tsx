@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import * as InternetTime from "dot-beat-time";
 
 import stylesUrl from "./styles/global.css";
-import { getGardenStorage } from "./workspace/storage.server";
+import { getGardenReplica } from "./workspace/storage.server";
 import { ES_AUTHOR_ADDRESS } from "./constants";
 
 export let links: LinksFunction = () => {
@@ -12,11 +12,12 @@ export let links: LinksFunction = () => {
 };
 
 export let loader: LoaderFunction = async () => {
-  const storage = getGardenStorage();
+  const replica = getGardenReplica();
 
-  const status =
-    storage?.getContent(`/about/~${ES_AUTHOR_ADDRESS}/status.txt`) ||
-    "Enjoying the morning.";
+  const statusDoc =
+   await replica?.getLatestDocAtPath(`/about/~${ES_AUTHOR_ADDRESS}/status.txt`);
+   
+   const status = statusDoc?.content || "Enjoying the morning."
 
   return { date: new Date(), status };
 };
