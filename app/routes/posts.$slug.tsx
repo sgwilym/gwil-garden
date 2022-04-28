@@ -43,7 +43,7 @@ export let loader: LoaderFunction = async ({ params }) => {
       headers: {
         Etag: postEtag,
       },
-    }
+    },
   );
 };
 
@@ -72,7 +72,11 @@ function ListItem(props: {}) {
 }
 
 function UnorderedList(props: {}) {
-  return <ul className={"pl-5 mb-8 leading-7"} {...props} />;
+  return <ul className={"pl-5 mb-4 leading-7"} {...props} />;
+}
+
+function OrderedList(props: {}) {
+  return <ul className={"pl-5 mb-4 leading-7"} {...props} />;
 }
 
 function Code(props: {}) {
@@ -88,7 +92,7 @@ export default function Post() {
 
   const Component = React.useMemo(
     () => getMDXComponent(post.code),
-    [post.code]
+    [post.code],
   );
 
   return (
@@ -109,6 +113,7 @@ export default function Post() {
           h4: H4,
           li: ListItem,
           ul: UnorderedList,
+          ol: OrderedList,
           code: Code,
         }}
       />
