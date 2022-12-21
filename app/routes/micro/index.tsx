@@ -27,7 +27,11 @@ export default function MicroPosts() {
     <ol className={"max-w-prose m-auto my-4 space-y-4"}>
       {microPosts.map((post, i, arr) => {
         return (
-          <MicroPost key={post.timestamp} className={borderClassname(i, arr)} lobbyPost={post} />
+          <MicroPost
+            key={post.timestamp}
+            className={borderClassname(i, arr)}
+            lobbyPost={post}
+          />
         );
       })}
     </ol>

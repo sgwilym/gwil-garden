@@ -49,7 +49,7 @@ export async function getLobbyPosts(): Promise<LobbyPost[]> {
       pathStartsWith: `/lobby/~${ES_AUTHOR_ADDRESS}/`,
       pathEndsWith: ".txt",
       contentLengthGt: 0,
-    }
+    },
   });
 
   return posts.map(lobbyPostFromDoc).sort((aPost, bPost) =>
@@ -91,7 +91,9 @@ export function getStarredLobbyPosts(): LobbyPost[] {
 }
 */
 
-export async function getLobbyPost(timestamp: number): Promise<LobbyPost | undefined> {
+export async function getLobbyPost(
+  timestamp: number,
+): Promise<LobbyPost | undefined> {
   const replica = getGardenReplica();
 
   if (!replica) {

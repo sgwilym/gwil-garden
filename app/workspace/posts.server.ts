@@ -1,4 +1,4 @@
-import { Doc } from "earthstar";
+import { Doc, isErr } from "earthstar";
 import { bundleMDX } from "mdx-bundler";
 import { getGardenReplica } from "./storage.server";
 import { ES_AUTHOR_ADDRESS } from "../constants";
@@ -84,7 +84,9 @@ export async function getPost(slug: string): Promise<Post | undefined> {
   const doc = await replica.getLatestDocAtPath(`/garden/posts/${slug}.md`);
 
   if (!doc) {
-    const mdxDoc = await replica.getLatestDocAtPath(`/garden/posts/${slug}.mdx`);
+    const mdxDoc = await replica.getLatestDocAtPath(
+      `/garden/posts/${slug}.mdx`,
+    );
 
     if (!mdxDoc) {
       return Promise.resolve(undefined);
@@ -109,7 +111,7 @@ export async function getPosts(): Promise<Post[]> {
       pathEndsWith: ".md",
       author: ES_AUTHOR_ADDRESS,
       contentLengthGt: 0,
-    }
+    },
   });
 
   const mdxDocs = await replica.queryDocs({
@@ -118,8 +120,51 @@ export async function getPosts(): Promise<Post[]> {
       pathEndsWith: ".mdx",
       author: ES_AUTHOR_ADDRESS,
       contentLengthGt: 0,
-    }
+    },
   });
 
   return Promise.all([...docs, ...mdxDocs].map(docToPost));
+}
+
+export async function createPost(data: FormData): Promise<Post | undefined> {
+  const title = data.get("title");
+  const description = data.get("description");
+  const date = new Date().toLocaleDateString("en-CA");
+  const body = data.get("body");
+  const secret = data.get("secret");
+  const slug = data.get("slug");
+
+  const replica = getGardenReplica();
+
+  const content = `---
+title: ${title}
+published: ${date}
+description: ${description}
+---
+
+${body}
+`;
+
+  if (!secret || !replica) {
+    return;
+  }
+
+  const keypair = {
+    address: "@gwil.b63a5eqlqqkv5im37s6vebgf3ledhkyt63gzt4ylvcyatlxmrprma",
+    secret: secret as string,
+  };
+
+  const result = await replica.set(keypair, {
+    content,
+    format: "es4",
+    path: `/garden/posts/${slug}.md`,
+  });
+
+  console.log(result);
+
+  if (isErr(result)) {
+    return;
+  }
+
+  return getPost(slug as string);
 }

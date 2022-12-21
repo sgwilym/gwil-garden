@@ -88,10 +88,12 @@ function Paragraph(props: {}) {
 }
 
 function BlockQuote(props: {}) {
-  return <blockquote
-    className={"mb-4 leading-7 bg-gray-50 pt-4 pb-1 px-4 border-l-4"}
-    {...props}
-  />;
+  return (
+    <blockquote
+      className={"mb-4 leading-7 bg-gray-50 pt-4 pb-1 px-4 border-l-4"}
+      {...props}
+    />
+  );
 }
 
 export default function Post() {

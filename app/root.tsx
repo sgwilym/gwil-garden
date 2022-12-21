@@ -14,10 +14,11 @@ export let links: LinksFunction = () => {
 export let loader: LoaderFunction = async () => {
   const replica = getGardenReplica();
 
-  const statusDoc =
-   await replica?.getLatestDocAtPath(`/about/~${ES_AUTHOR_ADDRESS}/status.txt`);
-   
-   const status = statusDoc?.content || "Enjoying the morning."
+  const statusDoc = await replica?.getLatestDocAtPath(
+    `/about/~${ES_AUTHOR_ADDRESS}/status.txt`,
+  );
+
+  const status = statusDoc?.content || "Enjoying the morning.";
 
   return { date: new Date(), status };
 };
@@ -93,9 +94,7 @@ export default function App() {
   return (
     <Document>
       <header
-        className={
-          "mt-6 py-4 bg-white max-w-prose m-auto border-b-2 border-gray-50 flex items-center space-x-4"
-        }
+        className={"mt-6 py-4 bg-white max-w-prose m-auto border-b-2 border-gray-50 flex items-center space-x-4"}
       >
         <img
           className={"bg-yellow-300 p-3"}

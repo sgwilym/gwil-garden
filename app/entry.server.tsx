@@ -34,6 +34,7 @@ getInstanceURLs().then((instances) => {
   });
 
   for (const instance of instances) {
+    console.log(`${process.env.FLY_REGION}: syncing with ${instance}`);
     syncer.transport.addConnection(`${instance}/earthstar-api/v2`);
   }
 });

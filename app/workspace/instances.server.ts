@@ -24,14 +24,14 @@ export async function getInstanceURLs(): Promise<Set<string>> {
 
   try {
     const ipv6s = await resolver.resolve6(
-      `${process.env.FLY_APP_NAME}.internal`
+      `${process.env.FLY_APP_NAME}.internal`,
     );
 
     const transformed = ipv6s
       .filter((ip) => !internalIpv6s.includes(ip))
       .map((ip) => `http://[${ip}]:8080`);
-      
-    return new Set(transformed)
+
+    return new Set(transformed);
   } catch {
     return new Set();
   }

@@ -4,6 +4,7 @@
   "co.gwil.deno.config.enableUnstable" : "false",
   "co.gwil.deno.config.formatOnSave" : "true",
   "co.gwil.deno.enable" : false,
+  "shouldDisplayFeatures" : true,
   "workspace.color" : 5,
   "workspace.preview_append_paths" : false,
   "workspace.preview_root" : "app\/routes",
