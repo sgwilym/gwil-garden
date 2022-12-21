@@ -1,13 +1,6 @@
 {
-  "co.gwil.deno.config.enableLinting" : "false",
-  "co.gwil.deno.config.enableLsp" : "false",
-  "co.gwil.deno.config.enableUnstable" : "false",
-  "co.gwil.deno.config.formatOnSave" : "true",
-  "co.gwil.deno.enable" : false,
-  "shouldDisplayFeatures" : true,
-  "workspace.color" : 5,
+  "workspace.color" : 3,
   "workspace.preview_append_paths" : false,
-  "workspace.preview_root" : "app\/routes",
   "workspace.preview_type" : "custom",
-  "workspace.preview_url" : "http:\/\/localhost:3000"
+  "workspace.preview_url" : "localhost:8080"
 }

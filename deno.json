@@ -1,0 +1,14 @@
+{
+  "importMap": "./import_map.json",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
+    "jsx": "react-jsxdev",
+    "jsxImportSource": "react"
+  },
+  "tasks": {
+    "server": "deno run -A --unstable src/server.ts",
+    "tailwind": "./tailwindcss build -i ./src/styles/tailwind.css -c ./tailwind.config.js -o ./public/style.css",
+    "deploy": "flyctl deploy --remote-only",
+    "docker": "docker build -t gwil-garden . && docker run -v data:/app/.data --init -p 8080:8080 gwil-garden"
+  }
+}

@@ -1,23 +1,25 @@
-# fly.toml file generated for fragrant-leaf-492 on 2021-06-02T13:42:57+02:00
+# fly.toml file generated for gwil-garden on 2022-12-21T12:56:38+01:00
 
-app = "fragrant-leaf-492"
+app = "gwil-garden"
 
 kill_signal = "SIGINT"
 kill_timeout = 5
-
-[build]
-  builder = "heroku/buildpacks:20"
+processes = []
 
 [env]
-  PORT = "8080"
 
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
 
+[mounts]
+  destination = "/app/.data"
+  source = "garden_data"
+
 [[services]]
   http_checks = []
   internal_port = 8080
+  processes = ["app"]
   protocol = "tcp"
   script_checks = []
 
@@ -27,6 +29,7 @@ kill_timeout = 5
     type = "connections"
 
   [[services.ports]]
+    force_https = true
     handlers = ["http"]
     port = 80
 
@@ -37,18 +40,5 @@ kill_timeout = 5
   [[services.tcp_checks]]
     grace_period = "1s"
     interval = "15s"
-    restart_limit = 6
+    restart_limit = 0
     timeout = "2s"
-
-[[statics]]
-  guest_path = "/public/images"
-  url_prefix = "/images"
-  
-[[statics]]
-guest_path = "/public/fonts"
-url_prefix = "/fonts"
-  
-    
-[mounts]
-source="garden_data"
-destination="/data"

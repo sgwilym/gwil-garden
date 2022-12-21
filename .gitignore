@@ -1,12 +1,4 @@
-node_modules
-
-/.cache
-/server/build
-/public/build
-/build
-
-.env
-
-/data
-/data-dev
+public/fonts
+tailwindcss
+.data
 .DS_Store
