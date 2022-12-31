@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className={"text-gray-300 max-w-prose m-auto py-6"}>
       <p>
-        This page was generated with data from{" "}
+        This page was created with data from{" "}
         <a
           className="underline text-blue-500"
           href="https://earthstar-project.org"
