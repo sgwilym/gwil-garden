@@ -33,14 +33,16 @@ export class ExtensionGardenBlogPost implements Earthstar.IServerExtension {
 
     const match = blogPostPattern.exec(req.url);
 
+    // This request isn't for a blog post...
     if (!match) {
-      // check if it's an asset...
+      // but it could still be an asset for a blog post.
       const blogPostAssetPattern = new URLPattern({
         pathname: "/posts/:slug/assets/:assetName",
       });
 
       const match = blogPostAssetPattern.exec(req.url);
 
+      // It's a blog post asset (e.g. image)
       if (match) {
         const { slug, assetName } = match.pathname.groups;
 
@@ -56,7 +58,6 @@ export class ExtensionGardenBlogPost implements Earthstar.IServerExtension {
         }
 
         // Check for Etag...
-
         const assetEtag = req.headers.get("If-None-Match");
 
         if (`W/${assetDoc.attachmentHash}` === assetEtag) {
