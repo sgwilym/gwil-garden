@@ -62,6 +62,7 @@ export function Layout(props: LayoutProps) {
           type="image/png"
         />
         <link rel="stylesheet" href="/style.css" />
+        <link rel="me" href="https://post.lurk.org/@gwil" />
         <title>{props.title}</title>
       </head>
       <body>
