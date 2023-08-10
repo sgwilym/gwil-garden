@@ -18,7 +18,7 @@ export function Footer() {
         and was rendered{"  "}
         <a
           className={"underline"}
-          href="https://seasonal-hours-clock.netlify.app"
+          href="https://seasonalclock.org/"
         >
           {new Date().getMinutes()} minutes past{"  "}{getHourOf().shortName}
           {" "}
