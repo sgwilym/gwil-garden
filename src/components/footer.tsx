@@ -3,6 +3,8 @@ import { GWIL_GARDEN_SHARE } from "../constants.ts";
 import { getHourOf } from "../helpers/seasonal_clock.ts";
 
 export function Footer() {
+  const seasonalHour = getHourOf();
+
   return (
     <footer className={"text-gray-300 max-w-prose m-auto py-6"}>
       <p>
@@ -20,9 +22,8 @@ export function Footer() {
           className={"underline"}
           href="https://seasonalclock.org/"
         >
-          {new Date().getMinutes()} minutes past{"  "}{getHourOf().shortName}
-          {" "}
-          hour
+          {seasonalHour.emoji} {new Date().getMinutes()} minutes past{" "}
+          {getHourOf().longName}
         </a>
         .
       </p>
