@@ -11,9 +11,16 @@ export class ExtensionGardenShare implements Earthstar.IServerExtension {
 
     const replica = new Earthstar.Replica({
       driver: {
+        /*
         docDriver: new DocDriverSqliteFfi({
           share: GWIL_GARDEN_SHARE,
           filename: `./.data/${GWIL_GARDEN_SHARE}.sql`,
+          mode: "create-or-open",
+        }),
+        */
+        docDriver: new Earthstar.DocDriverSqlite({
+          share: GWIL_GARDEN_SHARE,
+          filename: `./.data/${GWIL_GARDEN_SHARE}_not_ffi.sql`,
           mode: "create-or-open",
         }),
         attachmentDriver: new Earthstar.AttachmentDriverFilesystem(
