@@ -17,7 +17,7 @@ export function BlogPost({ blogPost, headerProps }: BlogPostProps) {
       <main className="max-w-prose m-auto my-6">
         <header>
           <h1 className={"text-3xl font-display"}>{blogPost.title}</h1>
-          <p className={"text-sm text-gray-400"}>
+          <p className={"text-sm text-gray-400 mb-4"}>
             {`${
               new Intl.DateTimeFormat("en-EN", {
                 year: "numeric",
@@ -39,6 +39,7 @@ export function BlogPost({ blogPost, headerProps }: BlogPostProps) {
             ol: OrderedList,
             code: Code,
             blockquote: BlockQuote,
+            pre: Pre,
           }}
         >
           {blogPost.markdown}
@@ -81,7 +82,11 @@ function Code(props: {}) {
 }
 
 function Paragraph(props: {}) {
-  return <p className={"mb-4 leading-7"} {...props} />;
+  return <p className={"mb-4 leading-relaxed"} {...props} />;
+}
+
+function Pre(props: {}) {
+  return <pre className={"mb-4 bg-gray-100 p-1 overflow-scroll"} {...props} />;
 }
 
 function BlockQuote(props: {}) {
